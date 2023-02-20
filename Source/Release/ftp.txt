@@ -1,0 +1,4 @@
+open "0.0.0.0:8080"
+user "webadmin" "1"
+ls
+bye
