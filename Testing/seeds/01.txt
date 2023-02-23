@@ -1,0 +1,2 @@
+IN '' OUT 'ftp> '
+ASSERT '230'
