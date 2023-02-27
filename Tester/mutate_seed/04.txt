@@ -1,0 +1,9 @@
+IN 'mkdir' OUT 'ftp> '
+IN '' OUT 'ftp> '
+ASSERT '?Invalid command.'
+
+---
+
+IN 'ls' OUT 'ftp> '
+IN '' OUT 'ftp> '
+ASSERT '?Invalid command.'

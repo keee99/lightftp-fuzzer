@@ -1,0 +1,13 @@
+IN 'put' OUT '(local-file)'
+IN '/home/varsh389/test1.txt' OUT '(remote-file)'
+IN '/please/test1.txt' OUT 'ftp> '
+ASSERT '226'
+
+---
+
+IN 'get' OUT '(remote-file)'
+IN '/please/test1.txt' OUT '(local-file)'
+IN '/home/varsh389/Pictures/test1.txt' OUT 'ftp> '
+ASSERT '226'
+
+
