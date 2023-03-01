@@ -1,16 +1,17 @@
 import pexpect
 import traceback
 
-from mutate_parse import seed_input
+from ftp_parse import seed_input
 
 #Retrieve these constants from nick's SWClient.py
 FTP_UNAME = 'webadmin'
 FTP_PWD = 'password'
 FTP_ADDR = '127.0.0.1'
 FTP_PORT = 8080
-SEED_DIR = "./mutate_seed"
+SEED_DIR = "/home/varsh389/Tests"
 
 PRINT_TEST_LOGS = True
+failed=[]
 
 
 
@@ -23,8 +24,9 @@ test_input = seed_input(SEED_DIR)
 
 # Main func
 def main():
-    test_result = map(run_tests, test_input)
+    test_result= map(run_tests, test_input)
     print("test results:", list(test_result), "\n")
+    print(failed)
 
 
 
@@ -72,7 +74,7 @@ def run_tests(tests):
             # Validation of test (requires some oracle?)
             for assertion in _assert:
                 
-                assert not assertion in get_log(ftp)
+                assert assertion in get_log(ftp)
             
             if PRINT_TEST_LOGS:
                 print(get_log(ftp))
@@ -94,6 +96,11 @@ def run_tests(tests):
 
     if PRINT_TEST_LOGS:
         print("======= END test ========= \n")
+
+    if(result==False):
+        failed.append(test["_input"][2])
+
+
     return result
 
 
