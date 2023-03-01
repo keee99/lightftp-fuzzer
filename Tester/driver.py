@@ -2,15 +2,24 @@ import pexpect
 import traceback
 
 from inputParse import seed_input
+from mutate_parse import seed_input
+from configParser import retrieve_account_details,retrieve_config_details,set_config
+
+# Check port in cfg file is not 21 and change to 80 if it is
+configDetails = retrieve_config_details()
+if configDetails['port']==21:
+    set_config('ftpconfig',"port",8080)
+
+# Retrieve local target folder and store in dict
+accountDetails = retrieve_account_details()
+# target_folder = accountDetails[account]['root']
 
 
-
-# Constants
-# Retrieve these constants from nick's SWClient.py
+#Retrieve these constants from nick's SWClient.py
 FTP_UNAME = 'webadmin'
-FTP_PWD = 'password'
-FTP_ADDR = '127.0.0.1'
-FTP_PORT = 8080
+FTP_PWD = accountDetails[FTP_UNAME]['pswd'] #'password'
+FTP_ADDR = configDetails['interface'] #'127.0.0.1'
+FTP_PORT = configDetails['port'] #8080
 SEED_DIR = "./seed"
 
 PRINT_TEST_LOGS = True

@@ -12,7 +12,7 @@ def seed_input(SEED_DIR):
      filename = os.fsdecode(file)
      if filename.endswith(".txt"): 
         # try:
-            f = open("/home/varsh389/LightFTPTesting/Tester/mutate_seed/04.txt", "rt")
+            f = open("./mutate_seed/04.txt", "rt")
             out=parse_file(f)
         # except:
             # print(filename, "failed to open/parse")

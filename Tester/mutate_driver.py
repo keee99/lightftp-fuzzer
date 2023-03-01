@@ -8,7 +8,7 @@ FTP_UNAME = 'webadmin'
 FTP_PWD = 'password'
 FTP_ADDR = '127.0.0.1'
 FTP_PORT = 8080
-SEED_DIR = "/home/varsh389/LightFTPTesting/Tester/mutate_seed"
+SEED_DIR = "./mutate_seed"
 
 PRINT_TEST_LOGS = True
 
