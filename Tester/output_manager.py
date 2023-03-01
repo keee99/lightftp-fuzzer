@@ -5,7 +5,11 @@ from datetime import datetime
 
 def manage_output(test_result):
     #create output folder, change path
-    output_file_path = '/home/laylin/LightFTPTesting/Tester/output'
+    output_file_path  = os.getcwd()+'/output'
+    if not os.path.exists(output_file_path ):
+        os.makedirs(output_file_path)
+
+    #output_file_path = './output'
 
     #use timestamp to name file
     now = datetime.now()

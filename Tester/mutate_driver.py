@@ -2,6 +2,7 @@ import pexpect
 import traceback
 
 from ftp_parse import seed_input
+from output_manager import manage_output
 
 
 
@@ -38,8 +39,10 @@ test_input = seed_input(SEED_DIR)
 
 # Main func
 def main():
-    test_result= map(run_tests, test_input)
-    print("test results:", list(test_result), "\n")
+    test_result= list(map(run_tests, test_input))
+    print("test results:", test_result, "\n")
+    manage_output(test_result)
+    
     print("Failed inputs: ")
     print(failed)
 
