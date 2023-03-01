@@ -11,7 +11,7 @@ FTP_UNAME = 'webadmin'
 FTP_PWD = 'password'
 FTP_ADDR = '127.0.0.1'
 FTP_PORT = 8080
-SEED_DIR = "./seeds"
+SEED_DIR = "./seed"
 
 PRINT_TEST_LOGS = True
 
