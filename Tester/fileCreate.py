@@ -3,16 +3,18 @@ import random
 import string
 
 # Define the directory to create the files in
-dir_path = '/home/varsh389/Tests'
+dir_path = os.getcwd()+'/seeds'
+if not os.path.exists(dir_path):
+    os.makedirs(dir_path)
 # adjust path and create a fuzzing file folder to store all the files
 
 # Define the number of files to create
-num_files = 100
+num_files = 200
 
 # Define the length of the random filename
 # Define the range of possible filename lengths
 min_length = 1
-max_length = 200
+max_length = 23
 
 # Define the set of characters to use in the filename
 filename_chars = string.ascii_letters + string.digits + string.punctuation

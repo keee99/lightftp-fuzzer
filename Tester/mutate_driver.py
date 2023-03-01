@@ -3,17 +3,31 @@ import traceback
 
 from ftp_parse import seed_input
 
+
+
+
+from configParser import retrieve_account_details,retrieve_config_details,set_config
+
+# Check port in cfg file is not 21 and change to 80 if it is
+configDetails = retrieve_config_details()
+if configDetails['port']==21:
+    set_config('ftpconfig',"port",8080)
+
+# Retrieve local target folder and store in dict
+accountDetails = retrieve_account_details()
+# target_folder = accountDetails[account]['root']
+
+
 #Retrieve these constants from nick's SWClient.py
 FTP_UNAME = 'webadmin'
-FTP_PWD = 'password'
-FTP_ADDR = '127.0.0.1'
-FTP_PORT = 8080
-SEED_DIR = "/home/varsh389/Tests"
+FTP_PWD = accountDetails[FTP_UNAME]['pswd'] #'password'
+FTP_ADDR = configDetails['interface'] #'127.0.0.1'
+FTP_PORT = configDetails['port'] #8080
+SEED_DIR = "./seeds"
+
 
 PRINT_TEST_LOGS = True
 failed=[]
-
-
 
 # Test input
 #   _input and _expect same length --> each input gives an expected output
@@ -26,6 +40,7 @@ test_input = seed_input(SEED_DIR)
 def main():
     test_result= map(run_tests, test_input)
     print("test results:", list(test_result), "\n")
+    print("Failed inputs: ")
     print(failed)
 
 

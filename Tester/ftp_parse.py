@@ -2,8 +2,11 @@ import os
 import random
 import re
 
-TEST_DIR="/home/varsh389/Tests"
-FTP_DIR="/test/"
+from configParser import retrieve_account_details
+
+
+accountDetails=retrieve_account_details()
+FTP_DIR=accountDetails['webadmin']['root']
 
 def seed_input(SEED_DIR):
     
@@ -68,7 +71,7 @@ def parse_file(f,fn):
 
     test_struct["_input"].append(f)
     test_struct["_expect"].append('(remote-file)')
-    test_struct["_input"].append(FTP_DIR+fn)
+    test_struct["_input"].append(FTP_DIR+'/'+fn)
     test_struct["_expect"].append('ftp> ')
     test_struct["_assert"].append('226')
     #assertval=assertion.group(1)
