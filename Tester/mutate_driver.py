@@ -1,17 +1,14 @@
 import pexpect
 import traceback
 
-from inputParse import seed_input
+from mutate_parse import seed_input
 
-
-
-# Constants
-# Retrieve these constants from nick's SWClient.py
+#Retrieve these constants from nick's SWClient.py
 FTP_UNAME = 'webadmin'
 FTP_PWD = 'password'
 FTP_ADDR = '127.0.0.1'
 FTP_PORT = 8080
-SEED_DIR = "./seed"
+SEED_DIR = "/home/varsh389/LightFTPTesting/Tester/mutate_seed"
 
 PRINT_TEST_LOGS = True
 
@@ -56,8 +53,8 @@ def run_tests(tests):
         print("\n======= NEW test =========")
 
     result = True
-    
     ftp = spawn_ftp_conn()
+    print(tests)
     try:
         for test in tests:
             _input = test["_input"]
@@ -69,14 +66,13 @@ def run_tests(tests):
             # iterate through and send the inputs
             for i in range(len(_input)):
                 
-                
                 ftp.sendline(_input[i])
                 ftp.expect(_expect[i])
 
             # Validation of test (requires some oracle?)
             for assertion in _assert:
                 
-                assert assertion in get_log(ftp)
+                assert not assertion in get_log(ftp)
             
             if PRINT_TEST_LOGS:
                 print(get_log(ftp))
