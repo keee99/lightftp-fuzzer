@@ -4,6 +4,7 @@ import traceback
 from inputParse import seed_input
 from mutate_parse import seed_input
 from configParser import retrieve_account_details,retrieve_config_details,set_config
+from output_manager import manage_output
 
 # Check port in cfg file is not 21 and change to 80 if it is
 configDetails = retrieve_config_details()
@@ -36,7 +37,8 @@ test_input = seed_input(SEED_DIR)
 # Main func
 def main():
     test_result = map(run_tests, test_input)
-    print("test results:", list(test_result), "\n")
+    manage_output(list(test_result))
+    print("test results:", list(map(run_tests, test_input)), "\n")
 
 
 
