@@ -10,16 +10,18 @@ class OutputManager:
 
     # Adds the output of a driver test into 
     def add_test_output(self, result: bool, inputs: List,*other):
-        self.test_inputs.append(input)
+        self.test_inputs.append(inputs)
         self.test_results.append(result)
+
+        # TODO: add output (for error cases), collect coverage data (?)
     
 
     # TODO: write input and outputs too
-    def write_final_output(self, test_result):
+    def write_final_output(self) -> str:
         
         #create output folder, change path
         output_file_path  = os.getcwd()+'/output'
-        if not os.path.exists(output_file_path):
+        if not os.path.exists(output_file_path ):
             os.makedirs(output_file_path)
 
         #output_file_path = './output'
@@ -30,10 +32,19 @@ class OutputManager:
         filename = now_str+".txt"
 
         #record tests that occured
-        total_tests = len(test_result)
-        total_pass = sum(test_result)
+        total_tests = len(self.test_results)
+        total_pass=0
+        total_fail=0
+        log_str =''
+        for i in range(len(self.test_results)):
+            if self.test_results[i]==True:
+                total_pass+=1
+                log_str=log_str+"test case:" + str(self.test_inputs[i]) + "\n"+"pass"+"\n"
+            elif self.test_results[i]==False:
+                total_fail+=1
+                log_str=log_str+"test case: "+ str(self.test_inputs[i]) + "\n"+"error"+"\n"
+        
         pass_string = "{} out of {} test cases passed.".format(total_pass, total_tests)
-        total_fail =  total_tests - total_pass
         fail_string = "{} out of {} test cases failed.".format(total_fail, total_tests)
 
         try:
@@ -41,9 +52,9 @@ class OutputManager:
                 f.write("Test at:"+now_str+"\n")
                 f.write(pass_string+"\n")
                 f.write(fail_string+"\n")
+                f.write("\n" + log_str  + "\n")
                 f.close()
         except FileNotFoundError:
-            print(now_str + '\n' + pass_string + '\n' + fail_string)
-            print("File not found, output not saved.")
-
-        return test_result
+            next
+            
+        return "log file written at " + output_file_path 

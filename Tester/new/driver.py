@@ -54,7 +54,7 @@ class FTPTestDriver:
             sub = re.search("@(.*)@", inpt)
             if sub and sub.group(1).isnumeric():
                 # Replace input with test input
-                print("Replacing input with test input:", inpt, _input[int(sub.group(1))])
+                print("Input:", inpt, _input[int(sub.group(1))])
                 test_input_arr[idx] = _input[int(sub.group(1))]
                 
 
