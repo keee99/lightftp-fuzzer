@@ -7,7 +7,8 @@ class InputManager:
         self.input_queue = deque()
 
     def choose_next(self):
-        next = self.input_queue.popleft()
+        if len(self.input_queue):
+            next = self.input_queue.popleft()
 
         return ["testdir" + str(random.randint(0, 1000))]
     

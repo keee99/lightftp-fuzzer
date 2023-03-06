@@ -6,13 +6,11 @@ class OutputManager:
     def __init__(self) -> None:
         self.test_results = []
         self.test_inputs = []
-        self.test_outputs = []
 
 
     # Adds the output of a driver test into 
-    def add_test_output(self, result: bool, inputs: List, outputs: List, *other):
+    def add_test_output(self, result: bool, inputs: List,*other):
         self.test_inputs.append(input)
-        self.test_outputs.append(outputs)
         self.test_results.append(result)
     
 

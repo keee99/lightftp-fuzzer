@@ -22,7 +22,7 @@ class FTPTestDriver:
     def run(self, test_input):
         test_result = self.run_test(test_input)
         logging.info("test results:", list(test_result), "\n")
-
+        return test_result
 
 
     # TODO: spawn FTP server and close FTP server (to get cov data)
@@ -105,4 +105,5 @@ class FTPTestDriver:
 
         if PRINT_TEST_LOGS:
             print("======= END test ========= \n")
-        return result
+
+        return [result, input]
