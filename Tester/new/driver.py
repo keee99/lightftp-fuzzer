@@ -49,7 +49,7 @@ class FTPTestDriver:
         return before + after
 
 
-    def insert_input_into_test(self, test_input_arr: List(str), _input: List(str)):
+    def insert_input_into_test(self, test_input_arr: List[str], _input: List[str]):
         for idx, inpt in enumerate(test_input_arr):
             sub = re.search("@(.*)@", inpt)
             if sub and sub.group(1).isnumeric():

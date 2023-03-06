@@ -11,5 +11,5 @@ class InputManager:
 
         return ["testdir" + str(random.randint(0, 1000))]
     
-    def add_input(self, newInput: List(str)) -> None:
+    def add_input(self, newInput: List[str]) -> None:
         self.input_queue.append(newInput)

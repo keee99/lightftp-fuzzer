@@ -43,7 +43,7 @@ class TestParser:
 
 
     @classmethod
-    def _parse_file(cls, f) -> List(TestDesc):
+    def _parse_file(cls, f) -> List[TestDesc]:
         out = []
         file_tests = f.read().split("---")
         for test in file_tests:

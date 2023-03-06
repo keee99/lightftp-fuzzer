@@ -22,6 +22,7 @@ class ConfigParser:
 
         # Init new config parser
         configParser = configparser.RawConfigParser()
+        print(config_dir)
         configParser.read(config_dir)
         configDetails = dict(configParser.items('ftpconfig'))
 
