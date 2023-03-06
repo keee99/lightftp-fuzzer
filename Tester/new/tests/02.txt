@@ -1,0 +1,7 @@
+IN 'mkdir' OUT '(directory-name)'
+IN '@0@' OUT 'ftp> '
+ASSERT '257'
+---
+IN 'rmdir' OUT '(directory-name)'
+IN '@0@' OUT 'ftp> '
+ASSERT '250'
