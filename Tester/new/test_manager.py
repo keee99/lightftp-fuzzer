@@ -15,11 +15,10 @@ class TestManager:
         self.input_manager = InputManager()
         
         self.config = ConfigParser.get_config(CONFIG_PATH, FTP_ACCOUNT)
-        self.driver = FTPTestDriver(self.test, self.config)
 
     
     def run(self) -> None:
-        self.test = TestParser.seed_test(TEST_PATH)  
+        self.driver = FTPTestDriver(TestParser.seed_test(TEST_PATH), self.config)
         self.input_manager.add_input(SeedParser.seed_input(SEED_PATH))
         
         try:

@@ -12,9 +12,9 @@ class TestDesc:
         self.expects = []
         self.asserts = []
     
-    def add_action(self, input: str, expects: str):
+    def add_action(self, input: str, expect: str):
         self.inputs.append(input)
-        self.expects.append(expects)
+        self.expects.append(expect)
     
     def add_assertion(self, assertion: str):
         self.asserts.append(assertion)
@@ -32,7 +32,7 @@ class TestParser:
 
         if filename.endswith(".txt"): 
             try:
-                f = open(file_path + "/" + filename, "rt")
+                f = open(filename, "rt")
                 return cls._parse_file(f)
             
             except OSError:
@@ -59,11 +59,11 @@ class TestParser:
 
                 assertion =  re.search("ASSERT '(.*)'", datum)
                 if assertion:
-                    test_desc.add_assertion(assertion)
+                    test_desc.add_assertion(assertion.group(1))
                     continue
 
                 # Neither assertion not in_out --> raise ValueError
-                raise ValueError("Invalid test descriptor")
+                # raise ValueError("Invalid test descriptor")
             
             out.append(test_desc)         
 

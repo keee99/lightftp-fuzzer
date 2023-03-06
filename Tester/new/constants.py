@@ -5,7 +5,7 @@ USER = "jj"
 PRINT_TEST_LOGS = True
 
 # Paths
-CONFIG_PATH = './Source/Release/fftp.conf'
+CONFIG_PATH = '../../Source/Release/fftp.conf'
 TEST_PATH = "./tests/02.txt"
 SEED_PATH = "./seeds/02.txt"
 

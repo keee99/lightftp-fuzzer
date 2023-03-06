@@ -13,9 +13,9 @@ from typing import List
 
 class FTPTestDriver:
 
-    def __init__(self, test: List[TestDesc], config: Config) -> None:
+    def __init__(self, tests: List[TestDesc], config: Config) -> None:
         self.ftp_cfg = config
-        self.test = test
+        self.tests = tests
 
 
     # Main func
@@ -34,12 +34,12 @@ class FTPTestDriver:
     
 
     # Close FTP server connection
-    def _close_ftp_conn(ftp):
+    def _close_ftp_conn(self, ftp):
         return ftp.sendline('quit')
     
 
     # Retrieve all available logs
-    def _get_log(ftp):
+    def _get_log(self, ftp):
         after = "" if not isinstance(ftp.after, bytes) \
                 else ftp.after.decode("utf-8")
         
@@ -101,7 +101,7 @@ class FTPTestDriver:
             result = False
 
         finally:
-            self.close_ftp_conn(ftp)
+            self._close_ftp_conn(ftp)
 
         if PRINT_TEST_LOGS:
             print("======= END test ========= \n")

@@ -1,4 +1,5 @@
 import os
+import traceback
 from typing import List
 
 class SeedParser:
@@ -11,10 +12,11 @@ class SeedParser:
 
         if filename.endswith(".txt"): 
             try:
-                f = open(file_path + "/" + filename, "rt")
+                f = open(filename, "rt")
                 return cls._parse_file(f)
             
             except OSError:
+                traceback.print_exc()
                 print(filename, "failed to open/parse")
         else:
             raise ValueError("file not .txt")
