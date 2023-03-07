@@ -9,6 +9,20 @@ import traceback
 from typing import List
 
 
+
+class TestSummary:
+    def __init__(self, result: bool, input: List[str]) -> None:
+        self.result = result
+        self.input = input
+
+    def __str__(self) -> str:
+        return f"TestSummary(result={'PASS' if self.result else 'FAIL'}, input={self.input})"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+    
+
+
 # This class is responsible for executing the tests with a given input
 class FTPTestDriver:
 
@@ -105,7 +119,9 @@ class FTPTestDriver:
         finally:
             self._close_ftp_conn(ftp)
 
+        out = TestSummary(result, input)
         if PRINT_TEST_LOGS:
+            print(out)
             print("======= END test ========= \n")
 
-        return [result, input]
+        return out

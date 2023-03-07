@@ -1,5 +1,5 @@
 from env import *
-from driver import FTPTestDriver
+from driver import FTPTestDriver, TestSummary
 from output_manager import OutputManager
 from input_manager import InputManager
 from time import sleep
@@ -33,10 +33,10 @@ class TestManager:
                 next_input = self.input_manager.choose_next()
 
                 # Run the test and log the output
-                test_result, test_input = self.driver.run(next_input)
-                self.output_manager.add_test_output(test_result, test_input)
+                test_summary = self.driver.run(next_input)
+                self.output_manager.add_test_output(test_summary)
 
-                self.input_manager.generate_inputs(test_result)
+                self.input_manager.generate_inputs(test_summary)
                 
                 sleep(0.2)
 

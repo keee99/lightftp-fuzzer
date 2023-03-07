@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from driver import TestSummary
 from typing import List
 
 
@@ -11,9 +12,9 @@ class OutputManager:
 
 
     # Adds the output of a driver test into 
-    def add_test_output(self, result: bool, inputs: List,*other):
-        self.test_inputs.append(inputs)
-        self.test_results.append(result)
+    def add_test_output(self, test_summary: TestSummary) -> None:
+        self.test_inputs.append(test_summary.input)
+        self.test_results.append(test_summary.result)
 
         # TODO: add output (for error cases), collect coverage data (?)
     
