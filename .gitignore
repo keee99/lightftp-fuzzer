@@ -1,3 +1,4 @@
 ./Source/Release/fftp.conf
 ./Tester/__pycache__
 ./Tester/seeds
+*/__pycache__/*

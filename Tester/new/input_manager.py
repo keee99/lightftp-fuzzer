@@ -12,11 +12,9 @@ class InputManager:
 
     # Choose next input from input queue
     def choose_next(self):
-        
         # If seed queue is empty, seed it
         if not len(self.input_queue):
-            self.input_manager.add_input(SeedParser.seed_input(SEED_PATH))
-        
+            self.add_input(SeedParser.seed_input(SEED_PATH))
         return self.input_queue.popleft()
             
 

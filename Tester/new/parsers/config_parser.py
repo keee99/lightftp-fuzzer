@@ -9,6 +9,7 @@ class Config():
         self.pwd = None
         self.addr = None
         self.port = None
+        
 
 
 # This class is responsible for parsing the ftpconfig file
@@ -38,10 +39,11 @@ class ConfigParser:
         config.addr = configDetails['interface']    # '127.0.0.1'
         config.port = configDetails['port']         # '8080'
         
-        logging.info(f"account: \n {account}")
-        logging.info(f"pswd: \n {config.pwd}")
-        logging.info(f"host: \n {config.addr}")
-        logging.info(f"port: \n {config.port}")
+        logger = logging.getLogger()
+        logger.info(f"account: \n {account}")
+        logger.info(f"pswd: \n {config.pwd}")
+        logger.info(f"host: \n {config.addr}")
+        logger.info(f"port: \n {config.port}")
 
         return config
 

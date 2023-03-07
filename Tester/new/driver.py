@@ -15,12 +15,13 @@ class FTPTestDriver:
     def __init__(self, tests: List[TestDesc], config: Config) -> None:
         self.ftp_cfg = config
         self.tests = tests
+        self.logger = logging.getLogger()
 
 
     # Main func for test execution
     def run(self, test_input):
         test_result = self.run_test(test_input)
-        logging.info("test results:", list(test_result), "\n")
+        self.logger.info("test results:", list(test_result), "\n")
         return test_result
 
 
