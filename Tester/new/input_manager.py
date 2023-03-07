@@ -9,11 +9,30 @@ class InputManager:
     def __init__(self) -> None:
         self.input_queue = deque()
 
-    def choose_next(self):
-        if len(self.input_queue):
-            next = self.input_queue.popleft()
 
-        return ["testdir" + str(random.randint(0, 1000))]
-    
+    # Choose next input from input queue
+    def choose_next(self):
+        
+        # If seed queue is empty, seed it
+        if not len(self.input_queue):
+            self.input_manager.add_input(SeedParser.seed_input(SEED_PATH))
+        
+        return self.input_queue.popleft()
+            
+
+
+    # Add a new set of input (for seeding)
     def add_input(self, newInput: List[str]) -> None:
         self.input_queue.append(newInput)
+
+
+    # Generate new inputs based on the output of the last test
+    def generate_inputs(self, output_data) -> None:
+
+        # do something with output data...
+
+        self.add_input(["testdir" + str(random.randint(0, 1000))]) # Dummy input generation for now
+                        
+        # TODO: fuzzing is not yet done. Use Varsh's and NickHo's impl.
+        #       Pass output (or cov info) into here
+
