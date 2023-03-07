@@ -1,7 +1,10 @@
 from collections import deque
+from env import SEED_PATH
+from parsers.seed_parser import SeedParser
 from typing import List
 import random
 
+# This class is responsible for managing the input queue and generating the next input
 class InputManager:
     def __init__(self) -> None:
         self.input_queue = deque()

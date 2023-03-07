@@ -1,7 +1,9 @@
 import os
 from datetime import datetime
-from typing import List, Dict
+from typing import List
 
+
+# This class is responsible for collecting and writing test output
 class OutputManager:
     def __init__(self) -> None:
         self.test_results = []

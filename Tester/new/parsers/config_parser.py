@@ -1,7 +1,6 @@
 import os
 import logging
 import configparser
-from typing import Dict
 
 
 class Config():
@@ -12,7 +11,7 @@ class Config():
         self.port = None
 
 
-
+# This class is responsible for parsing the ftpconfig file
 class ConfigParser:
 
     DEFAULT_ACCT = "webadmin"

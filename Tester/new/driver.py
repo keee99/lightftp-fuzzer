@@ -1,5 +1,5 @@
 
-from constants import PRINT_TEST_LOGS
+from env import PRINT_TEST_LOGS
 import logging
 from parsers.config_parser import Config
 from parsers.test_parser import TestDesc, TestParser
@@ -9,8 +9,7 @@ import traceback
 from typing import List
 
 
-# Currently the test_input is the TEST not the input, change that
-
+# This class is responsible for executing the tests with a given input
 class FTPTestDriver:
 
     def __init__(self, tests: List[TestDesc], config: Config) -> None:
@@ -18,14 +17,14 @@ class FTPTestDriver:
         self.tests = tests
 
 
-    # Main func
+    # Main func for test execution
     def run(self, test_input):
         test_result = self.run_test(test_input)
         logging.info("test results:", list(test_result), "\n")
         return test_result
 
 
-    # TODO: spawn FTP server and close FTP server (to get cov data)
+    # TODO: spawn FTP server and close FTP server (to get cov data, and automate server starting process)
 
 
     # Connect to FTP server
@@ -49,6 +48,7 @@ class FTPTestDriver:
         return before + after
 
 
+    # Insert test input into test, replacing @0@, @1@, etc. with the corresponding indexed inputs
     def insert_input_into_test(self, test_input_arr: List[str], _input: List[str]):
         for idx, inpt in enumerate(test_input_arr):
             sub = re.search("@(.*)@", inpt)
@@ -58,6 +58,8 @@ class FTPTestDriver:
                 test_input_arr[idx] = _input[int(sub.group(1))]
                 
 
+
+    # Runs the test with the given input
     def run_test(self, input):
         if PRINT_TEST_LOGS: 
             print("\n======= NEW test =========")
@@ -82,7 +84,6 @@ class FTPTestDriver:
 
                 # Validation of test (requires some oracle?)
                 for assertion in _assert:
-                    
                     assert assertion in self._get_log(ftp)
                 
                 if PRINT_TEST_LOGS:

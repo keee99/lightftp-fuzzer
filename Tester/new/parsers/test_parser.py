@@ -19,8 +19,8 @@ class TestDesc:
     def add_assertion(self, assertion: str):
         self.asserts.append(assertion)
 
-    
 
+# This class is responsible for parsing the test files into TestDesc objects
 class TestParser:
 
     @classmethod

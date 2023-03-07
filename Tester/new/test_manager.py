@@ -1,4 +1,4 @@
-from constants import *
+from env import *
 from driver import FTPTestDriver
 from output_manager import OutputManager
 from input_manager import InputManager
@@ -9,9 +9,11 @@ from parsers.seed_parser import SeedParser
 from parsers.test_parser import TestParser
 
 
+# This class is responsible for managing the entire testing pipeline
 class TestManager:
 
     def __init__(self) -> None:
+        # Create OutputManager and InputManager
         self.output_manager = OutputManager()
         self.input_manager = InputManager()
         
