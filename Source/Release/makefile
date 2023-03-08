@@ -6,6 +6,11 @@
 
 RM := rm -rf
 
+
+CFLAGS = -g -Wall -fprofile-arcs -ftest-coverage
+
+
+
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
@@ -28,7 +33,7 @@ all: fftp
 fftp: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	$(CC) $(CFLAGS) -pthread -o "fftp" $(OBJS) $(USER_OBJS) $(LIBS)
+	$(CC) $(CFLAGS) -pthread -o "fftp" $(OBJS) $(USER_OBJS) $(LIBS) --coverage
 	@echo 'Finished building target: $@'
 	@echo ' '
 
