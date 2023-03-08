@@ -16,7 +16,7 @@ class TestSummary:
         self.input = input
 
     def __str__(self) -> str:
-        return f"TestSummary(result={'PASS' if self.result else 'FAIL'}, input={self.input})"
+        return f"Test: result={'PASS' if self.result else 'FAIL'}, input={self.input})"
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -29,13 +29,12 @@ class FTPTestDriver:
     def __init__(self, tests: List[TestDesc], config: Config) -> None:
         self.ftp_cfg = config
         self.tests = tests
-        self.logger = logging.getLogger()
 
 
     # Main func for test execution
     def run(self, test_input):
         test_result = self.run_test(test_input)
-        self.logger.info("test results:", list(test_result), "\n")
+        print(test_result)
         return test_result
 
 
@@ -121,7 +120,6 @@ class FTPTestDriver:
 
         out = TestSummary(result, input)
         if PRINT_TEST_LOGS:
-            print(out)
             print("======= END test ========= \n")
 
         return out
