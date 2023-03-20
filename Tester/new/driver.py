@@ -6,6 +6,7 @@ from parsers.test_parser import TestDesc, TestParser
 import pexpect
 import re
 import traceback
+import subprocess,threading,time,os,signal
 from typing import List
 
 
@@ -33,13 +34,30 @@ class FTPTestDriver:
 
     # Main func for test execution
     def run(self, test_input):
+        # Start Server
+        server = pexpect.spawn("gnome-terminal --wait -- ./fftp", cwd="../../Source/Release" , encoding='utf-8')
+        
+        time.sleep(0.8)
         test_result = self.run_test(test_input)
         print(test_result)
+
+        # Close Server
+        server.close()
+        server_pid = subprocess.check_output(["pidof","./fftp"])
+        os.kill(int(server_pid.decode()),signal.SIGTERM)
+
         return test_result
 
 
+    
     # TODO: spawn FTP server and close FTP server (to get cov data, and automate server starting process)
+    # def start_server(self):
+    #     pexpect.spawn("gnome-terminal -- ./fftp", cwd="../../Source/Release" , encoding='utf-8')
 
+    # def stop_server(self):
+    #     server_pid = subprocess.check_output(["pidof","./fftp"])
+    #     print(server_pid.decode())
+    #     os.kill(int(server_pid.decode()),signal.SIGTERM)
 
     # Connect to FTP server
     def _spawn_ftp_conn(self):
@@ -79,7 +97,7 @@ class FTPTestDriver:
             print("\n======= NEW test =========")
 
         result = True
-        
+
         ftp = self._spawn_ftp_conn()
         try:
             for test in self.tests:
@@ -121,5 +139,5 @@ class FTPTestDriver:
         out = TestSummary(result, input)
         if PRINT_TEST_LOGS:
             print("======= END test ========= \n")
-
+            
         return out
