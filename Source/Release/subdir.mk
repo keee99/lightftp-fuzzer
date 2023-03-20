@@ -25,7 +25,13 @@ C_DEPS += \
 ./ftpconst.d \
 ./ftpserv.d \
 ./main.d \
-./x_malloc.d 
+./x_malloc.d \
+./cfgparse.gcno\
+./fspathtools.gcno\
+./ftpconst.gcno\
+./ftpserv.gcno\
+./main.gcno\
+./x_malloc.gcno \
 
 
 # Each subdirectory must supply rules for building sources it contributes

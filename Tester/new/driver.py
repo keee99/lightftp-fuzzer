@@ -30,30 +30,33 @@ class FTPTestDriver:
         self.ftp_cfg = config
         self.tests = tests
 
-        # TODO: make new gccov file
+        self._ftp_clean_make();
 
 
     # Main func for test execution
     def run(self, test_input):
-        # TODO: setup
+
+        ftp_server = self._spawn_ftp_server()
+
         test_result = self.run_test(test_input)
-        # TODO: tear down
+
+        self._close_ftp_server(ftp_server)
+        
         print(test_result)
+        self._run_gcov()
         return test_result
 
     def _ftp_clean_make(self):
-        run(["/bin/bash", "./scripts/cleanMake.sh"])
-        raise NotImplementedError("cleanMake.sh not implemented yet") # TODO
+        run(["/bin/sh", "./scripts/cleanMake.sh"])
 
     def _spawn_ftp_server(self) -> Popen:
-        return Popen(["/bin/bash", "./scripts/startLightFTP.sh"])
+        return Popen(["/bin/sh", "./scripts/startLightFTP.sh"])
 
     def _close_ftp_server(self, ftp_server: Popen) -> None:
         ftp_server.terminate() # TODO: Does force termination work here? Check if coverage is updated on force termination
 
     def _run_gcov(self):
-        run(["/bin/bash", "./scripts/gcovRun.sh"])
-        raise NotImplementedError("gcovRun.sh not implemented yet") # TODO
+        run(["/bin/sh", "./scripts/gcovRun.sh"])
 
     # Connect to FTP server
     def _spawn_ftp_conn(self):
