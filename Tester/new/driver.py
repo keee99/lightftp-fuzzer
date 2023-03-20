@@ -1,10 +1,10 @@
 
 from env import PRINT_TEST_LOGS
-import logging
 from parsers.config_parser import Config
 from parsers.test_parser import TestDesc, TestParser
 import pexpect
 import re
+from subprocess import Popen, run
 import traceback
 from typing import List
 
@@ -30,16 +30,30 @@ class FTPTestDriver:
         self.ftp_cfg = config
         self.tests = tests
 
+        # TODO: make new gccov file
+
 
     # Main func for test execution
     def run(self, test_input):
+        # TODO: setup
         test_result = self.run_test(test_input)
+        # TODO: tear down
         print(test_result)
         return test_result
 
+    def _ftp_clean_make(self):
+        run(["/bin/bash", "./scripts/cleanMake.sh"])
+        raise NotImplementedError("cleanMake.sh not implemented yet") # TODO
 
-    # TODO: spawn FTP server and close FTP server (to get cov data, and automate server starting process)
+    def _spawn_ftp_server(self) -> Popen:
+        return Popen(["/bin/bash", "./scripts/startLightFTP.sh"])
 
+    def _close_ftp_server(self, ftp_server: Popen) -> None:
+        ftp_server.terminate() # TODO: Does force termination work here? Check if coverage is updated on force termination
+
+    def _run_gcov(self):
+        run(["/bin/bash", "./scripts/gcovRun.sh"])
+        raise NotImplementedError("gcovRun.sh not implemented yet") # TODO
 
     # Connect to FTP server
     def _spawn_ftp_conn(self):

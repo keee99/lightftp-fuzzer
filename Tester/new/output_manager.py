@@ -9,14 +9,15 @@ class OutputManager:
     def __init__(self) -> None:
         self.test_results = []
         self.test_inputs = []
+        self.test_cov = []
 
 
     # Adds the output of a driver test into 
-    def add_test_output(self, test_summary: TestSummary) -> None:
+    def add_test_output(self, test_summary: TestSummary, test_cov) -> None:
         self.test_inputs.append(test_summary.input)
         self.test_results.append(test_summary.result)
+        self.test_cov.append(test_cov)
 
-        # TODO: add output (for error cases), collect coverage data (?)
     
 
     # TODO: write input and outputs too
