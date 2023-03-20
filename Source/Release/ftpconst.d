@@ -1,1 +1,0 @@
-ftpconst.o: ../ftpconst.c

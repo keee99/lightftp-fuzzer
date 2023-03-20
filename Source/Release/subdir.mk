@@ -26,12 +26,30 @@ C_DEPS += \
 ./ftpserv.d \
 ./main.d \
 ./x_malloc.d \
-./cfgparse.gcno\
-./fspathtools.gcno\
-./ftpconst.gcno\
-./ftpserv.gcno\
-./main.gcno\
+
+GCOV_DEPS += \
+./cfgparse.gcno \
+./cfgparse.gcov \
+./cfgparse.gcda \
+./fspathtools.gcno \
+./fspathtools.gcda \
+./ftpconst.gcno \
+./ftpserv.gcno \
+./ftpserv.c.gcov \
+./ftpserv.gcda \
+./ftpserv.gcov.json \
+./main.gcno \
+./main.gcda \
 ./x_malloc.gcno \
+./x_malloc.gcda \
+./byteswap.h.gcov \
+./fcntl2.h.gcov \
+./socket2.h.gcov \
+./string_fortified.h.gcov \
+./unistd.h.gcov \
+./stdio2.h.gcov \
+
+
 
 
 # Each subdirectory must supply rules for building sources it contributes

@@ -10,6 +10,7 @@ S_UPPER_SRCS :=
 EXECUTABLES := 
 OBJS := 
 C_DEPS := 
+GCOV_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \

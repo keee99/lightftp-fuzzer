@@ -39,7 +39,7 @@ fftp: $(OBJS) $(USER_OBJS)
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) fftp
+	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS)${GCOV_DEPS} fftp
 	-@echo ' '
 
 .PHONY: all clean dependents
