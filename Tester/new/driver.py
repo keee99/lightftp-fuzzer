@@ -7,6 +7,7 @@ import re
 import signal
 from subprocess import Popen, run, PIPE, STDOUT
 import traceback
+import subprocess,threading,time,os,signal
 from typing import List
 
 import time
@@ -38,14 +39,24 @@ class FTPTestDriver:
     # Main func for test execution
     def run(self, test_input):
 
-        ftp_server = self._spawn_ftp_server()
-        time.sleep(2) # Sleep to allow threaded server instance to spawn
+        # ftp_server = self._spawn_ftp_server()
+        # time.sleep(2) # Sleep to allow threaded server instance to spawn
+
+        # Start Server
+        ftp_server = pexpect.spawn("gnome-terminal --wait -- ./fftp", cwd="../../Source/Release" , encoding='utf-8')
+        time.sleep(0.8)
+
 
         test_result = self.run_test(test_input)
-
-        self._close_ftp_server(ftp_server)
-        
         print(test_result)
+
+        # Close Server
+        # self._close_ftp_server(ftp_server)
+        ftp_server.close()
+        server_pid = subprocess.check_output(["pidof","./fftp"])
+        os.kill(int(server_pid.decode()),signal.SIGTERM)
+
+
         self._run_gcov()
         return test_result
 
@@ -71,6 +82,15 @@ class FTPTestDriver:
         # ftp_server.sendline("q")
         time.sleep(0.1)
 
+    
+    # TODO: spawn FTP server and close FTP server (to get cov data, and automate server starting process)
+    # def start_server(self):
+    #     pexpect.spawn("gnome-terminal -- ./fftp", cwd="../../Source/Release" , encoding='utf-8')
+
+    # def stop_server(self):
+    #     server_pid = subprocess.check_output(["pidof","./fftp"])
+    #     print(server_pid.decode())
+    #     os.kill(int(server_pid.decode()),signal.SIGTERM)
 
     # Connect to FTP server
     def _spawn_ftp_conn(self):
@@ -110,7 +130,7 @@ class FTPTestDriver:
             print("\n======= NEW test =========")
 
         result = True
-        
+
         ftp = self._spawn_ftp_conn()
         try:
             test_count = 0
@@ -156,5 +176,5 @@ class FTPTestDriver:
         out = TestSummary(result, input)
         if PRINT_TEST_LOGS:
             print("======= END test ========= \n")
-
+            
         return out
