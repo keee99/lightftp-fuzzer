@@ -50,12 +50,14 @@ class OutputManager:
         
         pass_string = "{} out of {} test cases passed.".format(total_pass, total_tests)
         fail_string = "{} out of {} test cases failed.".format(total_fail, total_tests)
+        cov_string = "{} statement cov.".format(self.test_cov[-1]["statement_cov"]["cov"])
 
         try:
             with open(os.path.join(output_file_path, filename),"w") as f:
                 f.write("Test at:"+now_str+"\n")
                 f.write(pass_string+"\n")
                 f.write(fail_string+"\n")
+                f.write(cov_string+"\n")
                 f.write("\n" + log_str  + "\n")
                 f.close()
         except FileNotFoundError:

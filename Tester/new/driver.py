@@ -4,6 +4,7 @@ from parsers.config_parser import Config
 from parsers.test_parser import TestDesc, TestParser
 import pexpect
 import re
+import signal
 from subprocess import Popen, run, PIPE, STDOUT
 import traceback
 from typing import List
@@ -38,7 +39,7 @@ class FTPTestDriver:
     def run(self, test_input):
 
         ftp_server = self._spawn_ftp_server()
-        time.sleep(0.1) # Sleep to allow threaded server instance to spawn
+        time.sleep(2) # Sleep to allow threaded server instance to spawn
 
         test_result = self.run_test(test_input)
 
@@ -61,12 +62,14 @@ class FTPTestDriver:
 
     def _spawn_ftp_server(self):
         run(["chmod", "+x", SH_START_LFTP_PATH])
-        # return Popen(["/bin/sh", SH_START_LFTP_PATH], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-        return pexpect.spawn("./" + SH_START_LFTP_PATH)
+        return Popen(["../../Source/Release/fftp"],stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+        # return pexpect.spawn("./" + SH_START_LFTP_PATH)
 
     def _close_ftp_server(self, ftp_server: Popen) -> None:
-        # ftp_server.terminate() # TODO: Does force termination work here? Check if coverage is updated on force termination
-        ftp_server.sendline("q")
+        # TODO: Does force termination work here? Check if coverage is updated on force termination - NO
+        ftp_server.communicate(b'q')
+        # ftp_server.sendline("q")
+        time.sleep(0.1)
 
 
     # Connect to FTP server
