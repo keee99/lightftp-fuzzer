@@ -26,7 +26,7 @@ class InputManager:
 
 
     # Generate new inputs based on the output of the last test
-    def generate_inputs(self, test_summary: TestSummary) -> None:
+    def generate_inputs(self, test_summary: TestSummary, test_cov) -> None:
 
         # do something with output data...
         

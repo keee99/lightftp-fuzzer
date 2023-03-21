@@ -3,6 +3,7 @@ from driver import FTPTestDriver
 from output_manager import OutputManager
 from input_manager import InputManager
 from time import sleep
+import traceback
 
 from parsers.config_parser import ConfigParser
 from parsers.coverage_parser import CoverageParser
@@ -30,6 +31,8 @@ class TestManager:
         try:
             # while True:
             for x in range(NUM_TESTS):
+
+                print("start new test")
                 # Choose next input from input queue
                 next_input = self.input_manager.choose_next()
 
@@ -41,11 +44,15 @@ class TestManager:
 
                 # Generate new inputs based on the output of the last test
                 self.input_manager.generate_inputs(test_summary, test_cov)
+
+                print("\n")
                 
                 sleep(0.2)
 
         except KeyboardInterrupt:
             "Keyboard interrupt - end tests"
+        except:
+            traceback.print_exc()
 
         finally:
             print(self.output_manager.write_final_output())
