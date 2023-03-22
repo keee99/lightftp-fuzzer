@@ -39,11 +39,12 @@ class FTPTestDriver:
     # Main func for test execution
     def run(self, test_input):
 
-        # ftp_server = self._spawn_ftp_server()
+        ftp_server = self._spawn_ftp_server()
         # time.sleep(2) # Sleep to allow threaded server instance to spawn
 
         # Start Server
-        ftp_server = pexpect.spawn("gnome-terminal --wait -- ./fftp", cwd="../../Source/Release" , encoding='utf-8')
+        # ftp_server = pexpect.spawn("gnome-terminal --wait -- ./fftp", cwd="../../Source/Release" , encoding='utf-8')
+        # ftp_server = pexpect.spawn("../../Source/Release/fftp")
         time.sleep(0.8)
 
 
@@ -51,10 +52,10 @@ class FTPTestDriver:
         print(test_result)
 
         # Close Server
-        # self._close_ftp_server(ftp_server)
-        ftp_server.close()
-        server_pid = subprocess.check_output(["pidof","./fftp"])
-        os.kill(int(server_pid.decode()),signal.SIGTERM)
+        self._close_ftp_server(ftp_server)
+        # ftp_server.close()
+        # server_pid = subprocess.check_output(["pidof","./fftp"])
+        # os.kill(int(server_pid.decode()),signal.SIGTERM)
 
 
         self._run_gcov()
@@ -77,13 +78,11 @@ class FTPTestDriver:
         # return pexpect.spawn("./" + SH_START_LFTP_PATH)
 
     def _close_ftp_server(self, ftp_server: Popen) -> None:
-        # TODO: Does force termination work here? Check if coverage is updated on force termination - NO
         ftp_server.communicate(b'q')
         # ftp_server.sendline("q")
         time.sleep(0.1)
 
     
-    # TODO: spawn FTP server and close FTP server (to get cov data, and automate server starting process)
     # def start_server(self):
     #     pexpect.spawn("gnome-terminal -- ./fftp", cwd="../../Source/Release" , encoding='utf-8')
 

@@ -1,9 +1,9 @@
 
 
 # General to change
-USER = "jj"
+# USER = "jj"
 PRINT_TEST_LOGS = False
-NUM_TESTS = 10
+NUM_TESTS = 4
 
 # Paths
 CONFIG_PATH = '../../Source/Release/fftp.conf'
