@@ -10,6 +10,9 @@ CONFIG_PATH = '../../Source/Release/fftp.conf'
 COVERAGE_PATH = "../../Source/Release/ftpserv.gcov.json"
 TEST_PATH = "./tests/put.txt"
 SEED_PATH = "./seeds/put.txt"
+INPUT_GEN_PATH = "./input"
+
+SEED_FILE = [["./seeds/putinput.txt", 2]] # Path, filename input index
 
 # LightFTP
 FTP_ACCOUNT = 'webadmin' 

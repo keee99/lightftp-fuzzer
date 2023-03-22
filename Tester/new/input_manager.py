@@ -1,6 +1,6 @@
 from collections import deque
 from driver import TestSummary
-from env import SEED_PATH
+from env import SEED_PATH, INPUT_GEN_PATH
 import os
 from parsers.seed_parser import SeedParser
 import random
@@ -13,53 +13,65 @@ class InputManager:
     def __init__(self) -> None:
         self.input_queue = deque()
         self.fuzzer = MutationRandomFuzzer()
+        self.seed_file_index = []
+
+        self.add_input(SeedParser.seed_input(SEED_PATH))
+        
+        # Seed files
+        seed_files = SeedParser.get_seed_files()
+        for file in seed_files:
+            self.save_file(file["name"], file["content"])
+            self.seed_file_index.append(file["index"])
 
 
-    # Choose next input from input queue
+    # Choose next input from input queue # TODO: Choose next input based on coverage
     def choose_next(self):
         # If seed queue is empty, seed it
         if not len(self.input_queue):
             self.add_input(SeedParser.seed_input(SEED_PATH))
         return self.input_queue.popleft()
-            
-
-    # Add a new set of input (for seeding)
-    def add_input(self, newInput: List[str]) -> None:
-
-        # Energy = 100 hardcoded for now
-        # for n in range(100):
-        #     self.input_queue.append(list(map(self.fuzzer.fuzz, newInput)))
-
-        self.input_queue.append(list(map(self.fuzzer.fuzz, newInput)))
-
-
 
     # Generate new inputs based on the output of the last test
     def generate_inputs(self, test_summary: TestSummary, test_cov) -> None:
 
-        # do something with output data... --> is interesting?
+        # do something with output data... --> is interesting, add_input, else random chance to add_input.
         
         # If interesting, add input (fuzz)
-        self.add_input(test_summary.input)
+        self.add_input(test_summary.input) 
 
+
+    # Add a new set of input and file input (for seeding) TODO: add Energy
+    def add_input(self, oldInput: List[str]) -> None:
+        fuzzed = list(map(self.fuzzer.fuzz, oldInput))
+
+        self.input_queue.append(fuzzed)
+        for i in self.seed_file_index:
+            self.add_file_input(oldInput[i], fuzzed[i])
     
 
-    def generate_rand_file(self, input_path: str, file_name: str, file_content=None):
+    # Add a new file input (for seeding)
+    def add_file_input(self, oldFileName: str, newFileName: str) -> None:
 
-        if file_content == None:
-            letters = string.ascii_letters
-            file_content = ''.join(random.choice(letters) for i in range(100))
+        content = SeedParser.read_file_content(os.path.join(INPUT_GEN_PATH, oldFileName))
+        self.save_file(newFileName, self.fuzzer.fuzz(content))
+        
+        # self.rm_file(INPUT_GEN_PATH, oldFileName)
 
+
+
+
+    # TODO: Shift to some file manager ==============
+    # Saves a file
+    def save_file(self, file_name: str, file_content=None):
         # Create the file with the random filename
         try:
-            with open(os.path.join(input_path, file_name), 'w+') as f:
-                f.write(self.fuzzer.fuzz(file_content))
+            with open(os.path.join(INPUT_GEN_PATH, file_name), 'w+') as f:
+                f.write(file_content)
                 f.close()
         except FileNotFoundError: # Exception error where the file cannot be created
             pass
         except OSError: # Exception error where the file cannot be written into
             pass
-
 
     def rm_file(self, input_path: str, file_name: str):
         try:
@@ -70,6 +82,7 @@ class InputManager:
             pass
 
             
+
 
 
 class MutationRandomFuzzer:

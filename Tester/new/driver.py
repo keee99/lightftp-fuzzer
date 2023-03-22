@@ -7,7 +7,7 @@ import re
 import signal
 from subprocess import Popen, run, PIPE, STDOUT
 import traceback
-import subprocess,threading,time,os,signal
+import time
 from typing import List
 
 import time
@@ -16,6 +16,7 @@ class TestSummary:
     def __init__(self, result: bool, input: List[str]) -> None:
         self.result = result
         self.input = input
+        self.files = {}
 
     def __str__(self) -> str:
         return f"Test: result={'PASS' if self.result else 'FAIL'}, input={self.input})"
@@ -23,6 +24,8 @@ class TestSummary:
     def __repr__(self) -> str:
         return self.__str__()
     
+    def add_file(self, file_name: str, file_content: str) -> None:
+        self.files[file_name] = file_content
 
 
 # This class is responsible for executing the tests with a given input
