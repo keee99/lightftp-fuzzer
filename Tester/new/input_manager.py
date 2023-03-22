@@ -15,12 +15,13 @@ class InputManager:
         self.fuzzer = MutationRandomFuzzer()
         self.seed_file_index = []
 
-        self.add_input(SeedParser.seed_input(SEED_PATH))
+        seeds = SeedParser.seed_input(SEED_PATH)
+        self.input_queue.append(seeds)
         
         # Seed files
         seed_files = SeedParser.get_seed_files()
         for file in seed_files:
-            self.save_file(file["name"], file["content"])
+            self.save_file(seeds["index"], file["content"])
             self.seed_file_index.append(file["index"])
 
 
@@ -53,7 +54,9 @@ class InputManager:
     def add_file_input(self, oldFileName: str, newFileName: str) -> None:
 
         content = SeedParser.read_file_content(os.path.join(INPUT_GEN_PATH, oldFileName))
-        self.save_file(newFileName, self.fuzzer.fuzz(content))
+        for i in range(100):
+            content = self.fuzzer.fuzz(content)
+        self.save_file(newFileName, content)
         
         # self.rm_file(INPUT_GEN_PATH, oldFileName)
 
@@ -65,21 +68,27 @@ class InputManager:
     def save_file(self, file_name: str, file_content=None):
         # Create the file with the random filename
         try:
-            with open(os.path.join(INPUT_GEN_PATH, file_name), 'w+') as f:
+            
+            if not os.path.exists(INPUT_GEN_PATH):
+                os.makedirs(INPUT_GEN_PATH)
+
+            with open(os.path.join(INPUT_GEN_PATH, file_name), 'w') as f:
                 f.write(file_content)
                 f.close()
+                
         except FileNotFoundError: # Exception error where the file cannot be created
-            pass
+            print("file not found")
         except OSError: # Exception error where the file cannot be written into
-            pass
+            print("os error wyd")
 
     def rm_file(self, input_path: str, file_name: str):
         try:
-            os.remove(os.path.join(input_path, file_name+ '.txt'))
+            os.remove(os.path.join(input_path, file_name, '.txt'))
+
         except FileNotFoundError: # Exception error where the file cannot be created
-            pass
+            print("file not found")
         except OSError: # Exception error where the file cannot be written into
-            pass
+            print("os error wyd")
 
             
 

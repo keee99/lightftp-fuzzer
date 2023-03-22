@@ -40,11 +40,9 @@ class SeedParser:
                 path = file[0]
                 filename_index = file[1]
 
-                content = cls.read_file_content(path)
-                name = os.path.basename(path)
-                     
+                content = cls.read_file_content(path)           
 
-                out.append({"name": name, "content": content, "index": filename_index})
+                out.append({"content": content, "index": filename_index})
         
         return out
     
