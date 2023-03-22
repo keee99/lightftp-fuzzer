@@ -1,6 +1,8 @@
 import os
 from datetime import datetime
 from driver import TestSummary
+import json
+import time
 from typing import List
 
 
@@ -10,6 +12,7 @@ class OutputManager:
         self.test_results = []
         self.test_inputs = []
         self.test_cov = []
+        self.times = []
 
 
     # Adds the output of a driver test into 
@@ -17,6 +20,7 @@ class OutputManager:
         self.test_inputs.append(test_summary.input)
         self.test_results.append(test_summary.result)
         self.test_cov.append(test_cov)
+        self.times.append(time.time())
 
     
 
@@ -34,6 +38,8 @@ class OutputManager:
         now = datetime.now()
         now_str = now.strftime("%d-%m-%y_%H:%M:%S")
         filename = now_str+".txt"
+
+        self.write_data_json(output_file_path, now_str)
 
         #record tests that occured
         total_tests = len(self.test_results)
@@ -64,3 +70,33 @@ class OutputManager:
             next
             
         return "log file written at " + output_file_path 
+    
+    def write_data_json(self, output_file_path: str, time_str: str):
+
+        #use timestamp to name file
+        filename = time_str+"_data"+".json"
+        data = []
+
+        for i in range(len(self.test_results)):
+
+            data_entry = {
+                "result": self.test_results[i],
+                "input": self.test_inputs[i],
+                "cov": self.test_cov[i],
+                "time": self.times[i]
+            }
+
+            data.append(data_entry)
+
+            
+        json_data = json.dumps(data)
+        
+
+        try:
+            with open(os.path.join(output_file_path, filename),"w+") as f:
+                f.write(json_data)
+                f.close()
+        except FileNotFoundError:
+            next
+            
+        return "data file written at " + output_file_path 
