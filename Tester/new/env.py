@@ -3,7 +3,10 @@
 # General to change
 # USER = "jj"
 PRINT_TEST_LOGS = True
+RUN_MODE = "TIME" # "TIME" or "NUM"
+
 NUM_TESTS = 4
+MIN_TO_RUN = 3
 
 # Paths
 CONFIG_PATH = '../../Source/Release/fftp.conf'
@@ -12,7 +15,10 @@ TEST_PATH = "./tests/put.txt"
 SEED_PATH = "./seeds/put.txt"
 INPUT_GEN_PATH = "./input"
 
-SEED_FILE = [["./seeds/putinput.txt", 2]] # Path, filename input index
+SEED_FILE = [ 
+    # [Path, filename input input_index]
+    ["./seeds/putinput.txt", 2]
+] 
 
 # LightFTP
 FTP_ACCOUNT = 'webadmin' 
