@@ -114,12 +114,15 @@ class FTPTestDriver:
 
     # Insert test input into test, replacing @0@, @1@, etc. with the corresponding indexed inputs
     def insert_input_into_test(self, test_input_arr: List[str], _input: List[str]):
+
         for idx, inpt in enumerate(test_input_arr):
-            sub = re.search("@(.*)@", inpt)
-            if sub and sub.group(1).isnumeric():
-                # Replace input with test input
-                print("Input:", inpt, _input[int(sub.group(1))])
-                test_input_arr[idx] = _input[int(sub.group(1))]
+
+            sub = re.findall("@([0-9])@", inpt)
+            mutated_str = test_input_arr[idx]
+            for match in sub:
+                mutated_str = mutated_str.replace("@{}@".format(match), _input[int(match)])
+            
+            test_input_arr[idx] = mutated_str
                 
 
 

@@ -1,15 +1,18 @@
 from collections import deque
 from driver import TestSummary
 from env import SEED_PATH
+import os
 from parsers.seed_parser import SeedParser
-from typing import List
 import random
+import string
+from typing import List
+
 
 # This class is responsible for managing the input queue and generating the next input
 class InputManager:
     def __init__(self) -> None:
         self.input_queue = deque()
-        self.fuzzer = BlackBoxFuzzer()
+        self.fuzzer = MutationRandomFuzzer()
 
 
     # Choose next input from input queue
@@ -22,24 +25,54 @@ class InputManager:
 
     # Add a new set of input (for seeding)
     def add_input(self, newInput: List[str]) -> None:
-        self.input_queue.append(newInput)
+
+        # Energy = 100 hardcoded for now
+        # for n in range(100):
+        #     self.input_queue.append(list(map(self.fuzzer.fuzz, newInput)))
+
+        self.input_queue.append(list(map(self.fuzzer.fuzz, newInput)))
+
 
 
     # Generate new inputs based on the output of the last test
     def generate_inputs(self, test_summary: TestSummary, test_cov) -> None:
 
-        # do something with output data...
+        # do something with output data... --> is interesting?
         
-        # Apply fuzzing on all input
-        self.add_input(list(map(self.fuzzer.fuzz, test_summary.input)))
-                        
-        # TODO: fuzzing is not yet done. Use Varsh's and NickHo's impl.
-        #       Pass output (or cov info) into here
-        #       Dont restrict to strings --> file/int --> implement a way to type the input
+        # If interesting, add input (fuzz)
+        self.add_input(test_summary.input)
+
+    
+
+    def generate_rand_file(self, input_path: str, file_name: str, file_content=None):
+
+        if file_content == None:
+            letters = string.ascii_letters
+            file_content = ''.join(random.choice(letters) for i in range(100))
+
+        # Create the file with the random filename
+        try:
+            with open(os.path.join(input_path, file_name), 'w+') as f:
+                f.write(self.fuzzer.fuzz(file_content))
+                f.close()
+        except FileNotFoundError: # Exception error where the file cannot be created
+            pass
+        except OSError: # Exception error where the file cannot be written into
+            pass
 
 
+    def rm_file(self, input_path: str, file_name: str):
+        try:
+            os.remove(os.path.join(input_path, file_name+ '.txt'))
+        except FileNotFoundError: # Exception error where the file cannot be created
+            pass
+        except OSError: # Exception error where the file cannot be written into
+            pass
 
-class BlackBoxFuzzer:
+            
+
+
+class MutationRandomFuzzer:
     def fuzz(self, inpt):
         return self.flip_random_character(inpt)
     
