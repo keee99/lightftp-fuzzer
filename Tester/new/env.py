@@ -2,10 +2,10 @@
 
 # General to change
 # USER = "jj"
-PRINT_TEST_LOGS = True
-RUN_MODE = "TIME" # "TIME" or "NUM"
+PRINT_TEST_LOGS = False
+RUN_MODE = "NUM" # "TIME" or "NUM"
 
-NUM_TESTS = 4
+NUM_TESTS = 10
 MIN_TO_RUN = 3
 
 # Paths

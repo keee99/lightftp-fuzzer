@@ -20,7 +20,7 @@ class InputManager:
         # Seed files
         seed_files = SeedParser.get_seed_files()
         for file in seed_files:
-            self.save_file(seeds["index"], file["content"])
+            self.save_file(seeds[file["index"]], file["content"])
             self.seed_file_index.append(file["index"])
 
 
@@ -57,7 +57,7 @@ class InputManager:
             content = self.fuzzer.fuzz(content)
         self.save_file(newFileName, content)
         
-        # self.rm_file(INPUT_GEN_PATH, oldFileName)
+        self.rm_file(INPUT_GEN_PATH, oldFileName)
 
 
 
