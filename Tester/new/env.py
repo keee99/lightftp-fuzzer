@@ -23,6 +23,9 @@ SEED_FILE = [
 # LightFTP
 FTP_ACCOUNT = 'webadmin' 
 
+# Graybox
+ENERGY_FACTOR = 10
+
 # Shell scripts
 SH_MAKE_PATH = "shCleanMake.sh"
 SH_CONNECT_LFTP_PATH = "shConnectLightFTP.sh"

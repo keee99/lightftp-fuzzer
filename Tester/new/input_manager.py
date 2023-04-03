@@ -1,6 +1,6 @@
 from collections import deque
 from driver import TestSummary
-from env import SEED_PATH, INPUT_GEN_PATH
+from env import SEED_PATH, INPUT_GEN_PATH, ENERGY_FACTOR
 import os
 from parsers.seed_parser import SeedParser
 import random
@@ -14,30 +14,42 @@ class InputManager:
         self.fuzzer = MutationRandomFuzzer()
         self.seed_file_index = []
 
-        seeds = SeedParser.seed_input(SEED_PATH)
-        self.input_queue.append(seeds)
+        self.seeds = [SeedParser.seed_input(SEED_PATH)]
+        for seed in self.seeds:
+            self.input_queue.append(seed)
         
         # Seed files
         seed_files = SeedParser.get_seed_files()
-        for file in seed_files:
-            self.save_file(seeds[file["index"]], file["content"])
+        for i, file in enumerate(seed_files):
+            self.save_file(self.seeds[i][file["index"]], file["content"])
             self.seed_file_index.append(file["index"])
 
+            
+        # seeds = SeedParser.seed_input(SEED_PATH)
+        # self.input_queue.append(seeds)
+        
+        # # Seed files
+        # seed_files = SeedParser.get_seed_files()
+        # for file in seed_files:
+        #     self.save_file(seeds[file["index"]], file["content"])
+        #     self.seed_file_index.append(file["index"])
 
-    # Choose next input from input queue # TODO: Choose next input based on coverage
-    def choose_next(self):
-        # If seed queue is empty, seed it
-        if not len(self.input_queue):
-            self.add_input(SeedParser.seed_input(SEED_PATH))
-        return self.input_queue.popleft()
+        self.highest_seen_cov = 0
+
 
     # Generate new inputs based on the output of the last test
     def generate_inputs(self, test_summary: TestSummary, test_cov) -> None:
 
         # do something with output data... --> is interesting, add_input, else random chance to add_input.
+        if self.is_interesting(test_cov):
+            self.seeds.append(test_summary.input)
+
+        energy = self.assign_energy(test_cov)    
         
         # If interesting, add input (fuzz)
-        self.add_input(test_summary.input) 
+
+        for e in range(energy):
+            self.add_input(test_summary.input) 
 
 
     # Add a new set of input and file input (for seeding) TODO: add Energy
@@ -45,19 +57,49 @@ class InputManager:
         fuzzed = list(map(self.fuzzer.fuzz, oldInput))
 
         self.input_queue.append(fuzzed)
+
+        # if there are files to fuzz and seed, create the files
         for i in self.seed_file_index:
-            self.add_file_input(oldInput[i], fuzzed[i])
+            old_file_name = oldInput[i]
+            new_file_name = fuzzed[i]
+
+            content = SeedParser.read_file_content(os.path.join(INPUT_GEN_PATH, old_file_name))
+            for i in range(100):
+                content = self.fuzzer.fuzz(content)
+            self.save_file(new_file_name, content)
     
 
-    # Add a new file input (for seeding)
-    def add_file_input(self, oldFileName: str, newFileName: str) -> None:
+    # GRAYBOX METHODS ===============================
 
-        content = SeedParser.read_file_content(os.path.join(INPUT_GEN_PATH, oldFileName))
-        for i in range(100):
-            content = self.fuzzer.fuzz(content)
-        self.save_file(newFileName, content)
+    # Mark the test as interesting if test coverage improves from the previous test
+    def is_interesting(self, test_cov) -> bool:
+        if test_cov["statement_cov"]["cov"] > self.highest_seen_cov:
+            self.highest_seen_cov = test_cov["statement_cov"]["cov"]
+            return True
+        return False
+    
+    # Choose the most interesting input from input queue as next input
+    def choose_next(self) -> List[str]:
+        # TODO: not done! --> record path frequency, choose lowest frequency path
+
+        # If seed queue is empty, seed it with original seeds + interesting test cases found
+        if not len(self.input_queue):
+            for seed in self.seeds:
+                self.add_input(seed)
+        return self.input_queue.popleft()
         
-        # self.rm_file(INPUT_GEN_PATH, oldFileName)
+
+    # Assign fuzzing energy to the input
+    def assign_energy(self, test_cov) -> int:
+
+        # Simple implementation that takes a multiple of coverage increase
+        cov_increment = test_cov["statement_cov"]["cov"] - self.highest_seen_cov
+        if cov_increment <= 0:
+            cov_increment = 0
+
+        
+        return ENERGY_FACTOR * int(cov_increment)
+
 
 
 
@@ -78,7 +120,7 @@ class InputManager:
         except FileNotFoundError: # Exception error where the file cannot be created
             print("file not found")
         except OSError: # Exception error where the file cannot be written into
-            print("os error wyd")
+            print("save file os error", file_name)
 
     def rm_file(self, input_path: str, file_name: str):
         try:
@@ -87,7 +129,7 @@ class InputManager:
         except FileNotFoundError: # Exception error where the file cannot be created
             print("file not found")
         except OSError: # Exception error where the file cannot be written into
-            print("os error wyd")
+            print("rm file os error", file_name, input_path)
 
             
 
@@ -95,10 +137,10 @@ class InputManager:
 
 class MutationRandomFuzzer:
     def fuzz(self, inpt):
-        return self.flip_random_character(inpt)
+        return self.flip(inpt)
     
-    def flip_random_character(self, s):
-        """Returns s with a random bit flipped in a random position"""
+    # Returns s with a random bit flipped in a random position
+    def flip(self, s):
         if s == "":
             return s
 
@@ -108,4 +150,5 @@ class MutationRandomFuzzer:
         new_c = chr(ord(c) ^ bit)
         # print("Flipping", bit, "in", repr(c) + ", giving", repr(new_c))
         return s[:pos] + new_c + s[pos + 1:]
+    
     
