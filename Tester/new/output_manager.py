@@ -26,6 +26,9 @@ class OutputManager:
 
     # TODO: write input and outputs too
     def write_final_output(self) -> str:
+
+        if len(self.test_results) == 0:
+            return "\nNo tests run"
         
         #create output folder, change path
         output_file_path  = os.getcwd()+'/output'

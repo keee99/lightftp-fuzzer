@@ -57,7 +57,7 @@ class InputManager:
             content = self.fuzzer.fuzz(content)
         self.save_file(newFileName, content)
         
-        self.rm_file(INPUT_GEN_PATH, oldFileName)
+        # self.rm_file(INPUT_GEN_PATH, oldFileName)
 
 
 

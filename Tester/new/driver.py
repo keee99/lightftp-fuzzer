@@ -76,8 +76,8 @@ class FTPTestDriver:
         self.run_sh(SH_GCOV_RUN_PATH)
 
     def _spawn_ftp_server(self):
-        run(["chmod", "+x", SH_START_LFTP_PATH])
-        return Popen(["../../Source/Release/fftp"],stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+        return Popen(["../../Source/Release/fftp"],stdin=PIPE,stdout=PIPE,stderr=STDOUT)
+        # run(["chmod", "+x", SH_START_LFTP_PATH])
         # return pexpect.spawn("./" + SH_START_LFTP_PATH)
 
     def _close_ftp_server(self, ftp_server: Popen) -> None:
