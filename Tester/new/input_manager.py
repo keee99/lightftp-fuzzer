@@ -1,22 +1,30 @@
-from collections import deque
 from driver import TestSummary
-from env import SEED_PATH, INPUT_GEN_PATH, ENERGY_FACTOR
+from env import SEED_PATH, INPUT_GEN_PATH, ENERGY_FACTOR, MAX_ENERGY, CLEAN_FILES
+from math import ceil
 import os
 from parsers.seed_parser import SeedParser
 import random
+import time
 from typing import List
 
 
 # This class is responsible for managing the input queue and generating the next input
 class InputManager:
     def __init__(self) -> None:
-        self.input_queue = deque()
+
+        # self.input_queue = deque()
+
+        # input queue map implementation for path record and selection
+        # Key = path, Value = input
+        # Seed: key = "", value = seed input (path unknown)
+        self.input_queue = {}
+
+
         self.fuzzer = MutationRandomFuzzer()
         self.seed_file_index = []
 
         self.seeds = [SeedParser.seed_input(SEED_PATH)]
-        for seed in self.seeds:
-            self.input_queue.append(seed)
+        self.input_queue[""] = self.seeds
         
         # Seed files
         seed_files = SeedParser.get_seed_files()
@@ -35,38 +43,63 @@ class InputManager:
         #     self.seed_file_index.append(file["index"])
 
         self.highest_seen_cov = 0
+        self.path_freq_map = {} # Number of times a path has chosen
+        self.path_gen_map = {} # Number of times a path has been generated
 
 
     # Generate new inputs based on the output of the last test
     def generate_inputs(self, test_summary: TestSummary, test_cov) -> None:
+        
+        if test_summary.result == "FAIL":
+            return
 
-        # do something with output data... --> is interesting, add_input, else random chance to add_input.
+        path, path_freq = self.get_and_set_path_freq(test_cov)
+
+        # If is interesting, add input to seeds
         if self.is_interesting(test_cov):
             self.seeds.append(test_summary.input)
 
-        energy = self.assign_energy(test_cov)    
-        
-        # If interesting, add input (fuzz)
+        # Assign energy to the input and fuzz based on energy
+        energy = self.assign_energy(path_freq)    
+        self.add_input(test_summary.input, exec_path=path, energy=energy) 
+
+        if path in self.path_gen_map:
+            self.path_gen_map[path] += energy
+        else:
+            self.path_gen_map[path] = 1           
+
+
+    # Add and fuzz a new set of input and file input (for seeding)
+    def add_input(self, oldInput: List[str], exec_path="", energy=1) -> None:
 
         for e in range(energy):
-            self.add_input(test_summary.input) 
+            fuzzed = list(map(self.fuzzer.fuzz, oldInput))
 
+            if exec_path in self.input_queue:
+                self.input_queue[exec_path].append(fuzzed)
+            else:
+                self.input_queue[exec_path] = [fuzzed]
+            
 
-    # Add a new set of input and file input (for seeding) TODO: add Energy
-    def add_input(self, oldInput: List[str]) -> None:
-        fuzzed = list(map(self.fuzzer.fuzz, oldInput))
+            # if there are files to fuzz and seed, create the files
+            for i in self.seed_file_index:
+                old_file_name = oldInput[i]
+                new_file_name = fuzzed[i]
 
-        self.input_queue.append(fuzzed)
+                content = SeedParser.read_file_content(os.path.join(INPUT_GEN_PATH, old_file_name))
+                for i in range(100):
+                    content = self.fuzzer.fuzz(content)
+                self.save_file(new_file_name, content)
+        
+        # clean old files
+        if CLEAN_FILES:
+            for i in self.seed_file_index:
+                old_file_name = oldInput[i]
+                self.rm_file(INPUT_GEN_PATH, old_file_name)
 
-        # if there are files to fuzz and seed, create the files
-        for i in self.seed_file_index:
-            old_file_name = oldInput[i]
-            new_file_name = fuzzed[i]
-
-            content = SeedParser.read_file_content(os.path.join(INPUT_GEN_PATH, old_file_name))
-            for i in range(100):
-                content = self.fuzzer.fuzz(content)
-            self.save_file(new_file_name, content)
+        
+    
+        
     
 
     # GRAYBOX METHODS ===============================
@@ -80,28 +113,72 @@ class InputManager:
     
     # Choose the most interesting input from input queue as next input
     def choose_next(self) -> List[str]:
-        # TODO: not done! --> record path frequency, choose lowest frequency path
 
-        # If seed queue is empty, seed it with original seeds + interesting test cases found
+        # If seed queue is empty, seed it with fuzzed original seeds + interesting test cases found
         if not len(self.input_queue):
             for seed in self.seeds:
                 self.add_input(seed)
-        return self.input_queue.popleft()
+        
+        # Input queue is not empty, choose the next input
+        # If queue contains seed, prioritize seed
+        if "" in self.input_queue:
+            path = ""
+        else:
+            path = self.get_lowest_freq_input_path()
+
+        out = self.input_queue[path].pop(0)
+
+        if path in self.input_queue and not len(self.input_queue[path]):
+            self.input_queue.pop(path)
+            
+        return out
         
 
     # Assign fuzzing energy to the input
-    def assign_energy(self, test_cov) -> int:
+    def assign_energy(self, path_freq: int) -> int:
 
-        # Simple implementation that takes a multiple of coverage increase
-        cov_increment = test_cov["statement_cov"]["cov"] - self.highest_seen_cov
-        if cov_increment <= 0:
-            cov_increment = 0
+        result = 0
+        mean_freq = self.get_mean_path_freq()
 
+        if path_freq > mean_freq:
+            result = 0
+        else:
+            result = min([
+                MAX_ENERGY, 
+                # Simple exponential function for energy
+                ENERGY_FACTOR * ceil(pow(2, path_freq))])
         
-        return ENERGY_FACTOR * int(cov_increment)
+        print("Energy", result)
+
+        return result
 
 
 
+    # PATH FREQUENCY CALCULATIONS ============================
+
+    def get_path(self, test_cov) -> str:
+        test_cov_path = ""
+        for line in test_cov["statement_cov"]["executed_lines"]:
+            line_num = line["line_number"]
+            test_cov_path += str(line_num) + ","
+        return test_cov_path
+
+    def get_and_set_path_freq(self, test_cov) -> None:
+        path = self.get_path(test_cov)
+        if path in self.path_freq_map:
+            print("Path seen before, freq:", self.path_freq_map[path])
+            self.path_freq_map[path] += 1
+        else:
+            print("Path newly explored")
+            self.path_freq_map[path] = 1
+        return path, self.path_freq_map[path]
+
+    def get_mean_path_freq(self) -> int:
+        return sum(self.path_freq_map.values()) / len(self.path_freq_map)
+    
+    def get_lowest_freq_input_path(self) -> str:
+        input_path_freq_map = {k:v for (k,v) in self.path_freq_map.items() if k in self.input_queue}
+        return min(input_path_freq_map, key=input_path_freq_map.get)
 
 
     # TODO: Shift to some file manager ==============
@@ -118,16 +195,16 @@ class InputManager:
                 f.close()
                 
         except FileNotFoundError: # Exception error where the file cannot be created
-            print("file not found")
+            print("file cannot be created:", file_name)
         except OSError: # Exception error where the file cannot be written into
             print("save file os error", file_name)
 
     def rm_file(self, input_path: str, file_name: str):
         try:
-            os.remove(os.path.join(input_path, file_name, '.txt'))
+            os.remove(os.path.join(input_path, file_name))
 
         except FileNotFoundError: # Exception error where the file cannot be created
-            print("file not found")
+            print("rm file not found")
         except OSError: # Exception error where the file cannot be written into
             print("rm file os error", file_name, input_path)
 
@@ -137,7 +214,18 @@ class InputManager:
 
 class MutationRandomFuzzer:
     def fuzz(self, inpt):
-        return self.flip(inpt)
+        if inpt == None:
+            inpt = self.random_ascii_string()
+
+        # Currently randomly chooses
+        func = random.choice([
+            # self.flip, 
+            self.add, 
+            self.delete, 
+            # self.random_edge_case
+        ])
+        
+        return func(inpt)
     
     # Returns s with a random bit flipped in a random position
     def flip(self, s):
@@ -151,4 +239,40 @@ class MutationRandomFuzzer:
         # print("Flipping", bit, "in", repr(c) + ", giving", repr(new_c))
         return s[:pos] + new_c + s[pos + 1:]
     
+    # Add a random ASCII character to the string at a random position
+    def add(self, s):
+
+        c = chr(random.randint(33, 126))
+        # print("Adding", repr(c), "at position", pos)
+        return self.insert(s, c)
     
+    def insert(self, s, c):
+        pos = random.randint(0, len(s))
+        # print("Inserting", repr(c), "at position", pos)
+        return s[:pos] + c + s[pos:]
+    
+    def delete(self, s):
+        if s == "":
+            return s
+
+        pos = random.randint(0, len(s) - 1)
+        # print("Deleting character at position", pos)
+        return s[:pos] + s[pos + 1:]
+    
+    def random_ascii_string(self):
+        return "".join([chr(random.randint(33, 126)) for _ in range(10)])
+    
+    # Need change operator selection, or adapt test oracle to handle this
+    def random_edge_case(self, s):
+
+        edge_cases = [   
+            "",             # Empty string
+            "a" * 1000000,  # Very long string
+            "2147483647",   # Max int
+            "-2147483648",  # Min int
+            chr(random.randint(33, 126)), # Random Single character 
+            self.insert(s, random.choice(["\n", "\t", "\r", "\\"])), # Escape characters
+        ]
+
+        return random.choice(edge_cases)
+        

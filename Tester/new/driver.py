@@ -1,5 +1,5 @@
 
-from env import PRINT_TEST_LOGS, SH_GCOV_RUN_PATH, SH_MAKE_PATH, SH_START_LFTP_PATH
+from env import PRINT_TEST_LOGS, SH_GCOV_RUN_PATH, SH_MAKE_PATH, SH_CLEAN_PATH
 from parsers.config_parser import Config
 from parsers.test_parser import TestDesc, TestParser
 import pexpect
@@ -36,7 +36,7 @@ class FTPTestDriver:
         self.tests = tests
 
         print("running make clean, make")
-        self._ftp_clean_make();
+        self._ftp_clean_make()
 
 
     # Main func for test execution
@@ -48,7 +48,7 @@ class FTPTestDriver:
         # Start Server
         # ftp_server = pexpect.spawn("gnome-terminal --wait -- ./fftp", cwd="../../Source/Release" , encoding='utf-8')
         # ftp_server = pexpect.spawn("../../Source/Release/fftp")
-        time.sleep(0.8)
+        time.sleep(0.2)
 
 
         test_result = self.run_test(test_input)
@@ -68,6 +68,9 @@ class FTPTestDriver:
     def run_sh(self, file_path: str) -> None:
         run(["chmod", "+x", file_path], stdout=PIPE, stderr=STDOUT)
         run(["/bin/sh", file_path], stdout=PIPE, stderr=STDOUT)
+    
+    def _clean_dirs(self):
+        self.run_sh(SH_CLEAN_PATH)
         
     def _ftp_clean_make(self):
         self.run_sh(SH_MAKE_PATH)
@@ -163,7 +166,7 @@ class FTPTestDriver:
                 if PRINT_TEST_LOGS:
                     print(self._get_log(ftp))
 
-        except pexpect.exceptions.EOF as e:
+        except (pexpect.exceptions.EOF, pexpect.exceptions.TIMEOUT) as e:
             print("EOF Exception -- Some expected output not found.")
             print(self._get_log(ftp))
             print(e.get_trace())

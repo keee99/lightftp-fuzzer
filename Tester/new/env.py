@@ -3,7 +3,8 @@
 # General to change
 # USER = "jj"
 PRINT_TEST_LOGS = False
-RUN_MODE = "NUM" # "TIME" or "NUM"
+CLEAN_FILES = True
+RUN_MODE = "TIME" # "TIME" or "NUM"
 
 NUM_TESTS = 10
 MIN_TO_RUN = 3
@@ -24,10 +25,12 @@ SEED_FILE = [
 FTP_ACCOUNT = 'webadmin' 
 
 # Graybox
-ENERGY_FACTOR = 10
+ENERGY_FACTOR = 1
+MAX_ENERGY = 5
 
 # Shell scripts
 SH_MAKE_PATH = "shCleanMake.sh"
 SH_CONNECT_LFTP_PATH = "shConnectLightFTP.sh"
 SH_GCOV_RUN_PATH = "shGcovRun.sh"
 SH_START_LFTP_PATH = "shStartLightFTP.sh"
+SH_CLEAN_PATH = "shClean.sh"

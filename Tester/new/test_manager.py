@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from driver import FTPTestDriver
 from output_manager import OutputManager
 from input_manager import InputManager
+from subprocess import run, PIPE, STDOUT
 import traceback
 
 from parsers.config_parser import ConfigParser
@@ -14,6 +15,11 @@ from parsers.test_parser import TestParser
 class TestManager:
 
     def __init__(self) -> None:
+        
+        # CLean the project
+        run(["chmod", "+x", SH_CLEAN_PATH], stdout=PIPE, stderr=STDOUT)
+        run(["/bin/sh", SH_CLEAN_PATH], stdout=PIPE, stderr=STDOUT)
+
         # Create OutputManager and InputManager
         self.output_manager = OutputManager()
         self.input_manager = InputManager()
