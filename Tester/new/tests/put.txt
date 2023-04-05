@@ -1,6 +1,21 @@
+IN 'ls' OUT 'ftp> '
+ASSERT '200'
+
+---
+
 IN 'mkdir' OUT '(directory-name)'
 IN '@0@' OUT 'ftp> '
 ASSERT '257'
+
+---
+
+IN 'cd @0@' OUT 'ftp> '
+ASSERT '250'
+
+---
+
+IN 'cdup' OUT 'ftp> '
+ASSERT '250'
 
 ---
 
@@ -8,6 +23,34 @@ IN 'put' OUT '(local-file)'
 IN 'input/@2@' OUT '(remote-file)'
 IN '@0@/@1@' OUT 'ftp> '
 ASSERT '226'
+
+---
+
+IN 'get' OUT '(remote-file)'
+IN '@0@/@1@' OUT '(local-file)'
+IN 'input/@2@' OUT 'ftp> '
+ASSERT '226'
+
+---
+
+IN 'append' OUT '(local-file)'
+IN 'input/@2@' OUT '(remote-file)'
+IN '@0@/@1@' OUT 'ftp> '
+ASSERT '226'
+
+---
+
+IN 'chmod' OUT '(mode)'
+IN '777' OUT '(remote-file)'
+IN '@0@/@1@' OUT 'ftp> '
+ASSERT '200'
+
+---
+
+IN 'rename' OUT '(from-name)'
+IN '@0@/@1@' OUT '(to-name)'
+IN '@0@/@1@' OUT 'ftp> '
+ASSERT '250'
 
 ---
 
@@ -20,3 +63,73 @@ ASSERT '250'
 IN 'rmdir' OUT '(directory-name)'
 IN '@0@' OUT 'ftp> '
 ASSERT '250'
+
+---
+
+IN 'user banned' OUT 'Password:'
+ASSERT '331'
+
+---
+
+IN 'banned' OUT 'ftp>'
+ASSERT '530'
+
+---
+
+IN 'user anonymous' OUT 'Password:'
+ASSERT '331'
+
+---
+
+IN 'anonymous' OUT 'ftp>'
+ASSERT '230'
+
+---
+
+IN 'mkdir' OUT '(directory-name)'
+IN '@0@' OUT 'ftp>'
+ASSERT '550'
+
+---
+
+IN 'put' OUT '(local-file)'
+IN 'input/@2@' OUT '(remote-file)'
+IN '@0@/@1@' OUT 'ftp>'
+ASSERT '550'
+
+---
+
+IN 'user @0@' OUT 'Password:'
+ASSERT '331'
+
+---
+
+IN '@0@' OUT 'ftp>'
+ASSERT '530'
+
+---
+
+IN 'mkdir' OUT '(directory-name)'
+IN '@0@' OUT 'ftp>'
+ASSERT '530'
+
+---
+
+IN 'rename' OUT '(from-name)'
+IN '@0@/@1@' OUT '(to-name)'
+IN '@0@/@1@' OUT 'ftp> '
+ASSERT '530'
+
+---
+
+IN 'delete' OUT '(remote-file)'
+IN '@0@' OUT 'ftp>'
+ASSERT '530'
+
+---
+
+IN 'rmdir' OUT '(directory-name)'
+IN '@0@' OUT 'ftp>'
+ASSERT '530'
+
+---
