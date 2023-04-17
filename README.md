@@ -11,4 +11,5 @@
 
 
 ## How to edit the config file  
-1. Change `logfilepath` and `root` value for each user to your absolute path in your system that directs to an empty log file for the `logfilepath` and an empty folder for the `root`  
+1. Change `logfilepath` value in line `42` to your absolute path in your system that directs to an empty log file.  
+2. Change `root` value for each user (line `76`, `81`, `86`) to your absolute path in your system that directs to an empty folder for the `root`.  
