@@ -12,4 +12,9 @@
 
 ## How to edit the config file  
 1. Change `logfilepath` value in line `42` to your absolute path in your system that directs to an empty log file.  
-2. Change `root` value for each user (line `76`, `81`, `86`) to your absolute path in your system that directs to an empty folder for the `root`.  
+2. Create an empty folder anywhere in your system.  
+3. Change `root` value for each user (line `76`, `81`, `86`) to your absolute path in your system that directs to the empty folder for the `root`.  
+
+## FAQ
+1. After running the `python main_ftp.py`, this line appears for each iteration `550 permission denied`. How to fix?  
+   Ensure that the `root` value for each user is properly defined in the `fftp.conf` in both `Source/Release` and `Tester/new` directcory and ensure the empty folder exists in that path.
