@@ -1,4 +1,10 @@
-# LightFTPTesting
+# LightFTPTesting  
+This github contains greybox fuzzer to test [LightFTP](https://github.com/hfiref0x/LightFTP)  
+
+## System Requirements
+* x86-32/x64 POSIX compliant OS, e.g. Linux.
+* x86-32/x64 Windows 7/8/8.1/10 with Cygwin (see Build section of this readme).
+* No admin/root privileges required. FTP server must be allowed in firewall.  
 
 ## How To Run
 1) Go to `Source/Release` and edit the `fftp.conf` (click [here](#how-to-edit-the-config-file) to see what needs to be changed)  
