@@ -101,11 +101,8 @@ class InputManager:
                     content = self.fuzzer.fuzz(content)
                 self.save_file(new_file_name, content)
                 
-                
-                print("Created file: " + new_file_name, " Input:", str(fuzzed[i]))
-
-
-                print("Created file: " + new_file_name, " Input:", str(fuzzed[i]))
+                if PRINT_TEST_LOGS:
+                    print("Created file: " + new_file_name, " Input:", str(fuzzed[i]))
 
 
              # Add the input to the input queue corresponding to the previous exec path
@@ -244,15 +241,20 @@ class MutationRandomFuzzer:
         if inpt == None:
             inpt = self.random_ascii_string(character_set)
 
-        # Currently randomly chooses
-        func = random.choice([
-            # self.flip, 
-            self.add, 
-            self.delete, 
-            # self.random_edge_case
-        ])
+        output = ""
+
+        while output == "":
+            # Currently randomly chooses
+            func = random.choice([
+                # self.flip, 
+                self.add, 
+                self.delete, 
+                # self.random_edge_case
+            ])
+            
+            output = func(inpt, character_set)
         
-        return func(inpt, character_set)
+        return output
     
     # Returns s with a random bit flipped in a random position
     def flip(self, s, char_set):
