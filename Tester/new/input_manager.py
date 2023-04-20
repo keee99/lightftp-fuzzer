@@ -1,5 +1,5 @@
 from driver import TestSummary
-from env import SEED_PATH, INPUT_GEN_PATH, ENERGY_FACTOR, MAX_ENERGY, CLEAN_FILES
+from env import SEED_PATH, INPUT_GEN_PATH, ENERGY_FACTOR, MAX_ENERGY, CLEAN_FILES, PRINT_TEST_LOGS
 from math import ceil
 import os
 from parsers.seed_parser import SeedParser
@@ -101,6 +101,10 @@ class InputManager:
                     content = self.fuzzer.fuzz(content)
                 self.save_file(new_file_name, content)
                 
+                
+                print("Created file: " + new_file_name, " Input:", str(fuzzed[i]))
+
+
                 print("Created file: " + new_file_name, " Input:", str(fuzzed[i]))
 
 
@@ -167,11 +171,8 @@ class InputManager:
                 # Simple exponential function for energy
                 ENERGY_FACTOR * ceil(pow(2, path_freq))])
         
-        
-        print("Energy", result)
-
-
-        print("Energy", result)
+        if PRINT_TEST_LOGS:
+            print("Energy", result)
 
         return result
 
