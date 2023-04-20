@@ -39,7 +39,7 @@ class OutputManager:
 
         #use timestamp to name file
         now = datetime.now()
-        now_str = now.strftime("%d-%m-%y_%H:%M:%S")
+        now_str = now.strftime("%d-%m-%y_%H.%M.%S")
         filename = now_str+".txt"
 
         self.write_data_json(output_file_path, now_str)
@@ -78,6 +78,7 @@ class OutputManager:
 
         #use timestamp to name file
         filename = time_str+"_data"+".json"
+        print(filename)
         data = []
 
         for i in range(len(self.test_results)):

@@ -4,6 +4,7 @@ from math import ceil
 import os
 from parsers.seed_parser import SeedParser
 import random
+import string
 import time
 from typing import List
 
@@ -72,24 +73,42 @@ class InputManager:
     # Add and fuzz a new set of input and file input (for seeding)
     def add_input(self, oldInput: List[str], exec_path="", energy=1) -> None:
 
-        for e in range(energy):
-            fuzzed = list(map(self.fuzzer.fuzz, oldInput))
+        file_name_charset = string.ascii_letters + string.digits + "()_-,."
 
-            if exec_path in self.input_queue:
-                self.input_queue[exec_path].append(fuzzed)
-            else:
-                self.input_queue[exec_path] = [fuzzed]
-            
+        for e in range(energy):
+
+            fuzzed = list(map(self.fuzzer.fuzz, oldInput, file_name_charset))
 
             # if there are files to fuzz and seed, create the files
             for i in self.seed_file_index:
                 old_file_name = oldInput[i]
-                new_file_name = fuzzed[i]
+                new_file_name = fuzzed[i].replace(" ","_")
+
+                # truncate file name if too long
+                if len(new_file_name) > 255:
+                    new_file_name = new_file_name[:255]
+                    
+                # if file name already exists in path, repeat the fuzz
+                while os.path.exists(os.path.join(INPUT_GEN_PATH, new_file_name)):
+                    new_file_name = self.fuzzer.fuzz(new_file_name, file_name_charset)
+                    if len(new_file_name) > 255:
+                        new_file_name = new_file_name[:255]
+
+                fuzzed[i] = new_file_name
 
                 content = SeedParser.read_file_content(os.path.join(INPUT_GEN_PATH, old_file_name))
-                for i in range(100):
+                for j in range(100):
                     content = self.fuzzer.fuzz(content)
                 self.save_file(new_file_name, content)
+                
+                print("Created file: " + new_file_name, " Input:", str(fuzzed[i]))
+
+
+             # Add the input to the input queue corresponding to the previous exec path
+            if exec_path in self.input_queue:
+                self.input_queue[exec_path].append(fuzzed)
+            else:
+                self.input_queue[exec_path] = [fuzzed]
         
         # clean old files
         if CLEAN_FILES:
@@ -148,6 +167,10 @@ class InputManager:
                 # Simple exponential function for energy
                 ENERGY_FACTOR * ceil(pow(2, path_freq))])
         
+        
+        print("Energy", result)
+
+
         print("Energy", result)
 
         return result
@@ -213,9 +236,12 @@ class InputManager:
 
 
 class MutationRandomFuzzer:
-    def fuzz(self, inpt):
+
+    default_character_set = string.printable
+    
+    def fuzz(self, inpt, character_set=string.printable):
         if inpt == None:
-            inpt = self.random_ascii_string()
+            inpt = self.random_ascii_string(character_set)
 
         # Currently randomly chooses
         func = random.choice([
@@ -225,24 +251,29 @@ class MutationRandomFuzzer:
             # self.random_edge_case
         ])
         
-        return func(inpt)
+        return func(inpt, character_set)
     
     # Returns s with a random bit flipped in a random position
-    def flip(self, s):
+    def flip(self, s, char_set):
         if s == "":
             return s
 
-        pos = random.randint(0, len(s) - 1)
-        c = s[pos]
-        bit = 1 << random.randint(0, 6)
-        new_c = chr(ord(c) ^ bit)
+        new_c = ""
+        while (True):
+            pos = random.randint(0, len(s) - 1)
+            c = s[pos]
+            bit = 1 << random.randint(0, 6)
+            new_c = chr(ord(c) ^ bit)
+            if new_c in char_set:
+                break
+
         # print("Flipping", bit, "in", repr(c) + ", giving", repr(new_c))
         return s[:pos] + new_c + s[pos + 1:]
     
     # Add a random ASCII character to the string at a random position
-    def add(self, s):
+    def add(self, s, char_set):
 
-        c = chr(random.randint(33, 126))
+        c = random.sample(char_set, 1)[0] #only printable ASCII characters
         # print("Adding", repr(c), "at position", pos)
         return self.insert(s, c)
     
@@ -251,7 +282,7 @@ class MutationRandomFuzzer:
         # print("Inserting", repr(c), "at position", pos)
         return s[:pos] + c + s[pos:]
     
-    def delete(self, s):
+    def delete(self, s, char_set):
         if s == "":
             return s
 
@@ -259,20 +290,19 @@ class MutationRandomFuzzer:
         # print("Deleting character at position", pos)
         return s[:pos] + s[pos + 1:]
     
-    def random_ascii_string(self):
-        return "".join([chr(random.randint(33, 126)) for _ in range(10)])
+    def random_ascii_string(self, char_set):
+        return "".join([random.sample(char_set, 1)[0] for _ in range(10)]) #changed from 33,126 to 32,1126
     
     # Need change operator selection, or adapt test oracle to handle this
-    def random_edge_case(self, s):
+    def random_edge_case(self, s, char_set):
 
         edge_cases = [   
             "",             # Empty string
-            "a" * 1000000,  # Very long string
+            random.sample(char_set, 1)[0] * 1000000,  # Very long string
             "2147483647",   # Max int
             "-2147483648",  # Min int
-            chr(random.randint(33, 126)), # Random Single character 
+            random.sample(char_set, 1)[0], # Random Single character changed from 33,126 to 32,1126
             self.insert(s, random.choice(["\n", "\t", "\r", "\\"])), # Escape characters
         ]
 
         return random.choice(edge_cases)
-        

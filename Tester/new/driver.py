@@ -144,7 +144,8 @@ class FTPTestDriver:
             test_count = 0
             for test in self.tests:
                 test_count += 1
-                print("sub-test", test_count, end=" - ")
+                if PRINT_TEST_LOGS:
+                    print("sub-test", test_count, end=" - ")
 
                 _input = test.inputs[:]
                 _expect = test.expects
