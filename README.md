@@ -22,7 +22,7 @@ LightFTP uses GnuTLS library. It need to be installed before compiling LightFTP.
 
       sudo apt install gnutls-dev
 	  
-or if this doesn't work try:
+or if this doesn't work, try:
 
       sudo apt install libgnutls28-dev  
 
@@ -36,14 +36,15 @@ In case if you want to use git and git is not installed, install it first:
 Next use the following:
 
       git clone https://github.com/Stygian84/LightFTPTesting.git  
-      
-1) Go to `Source/Release` and edit the `fftp.conf` (click [here](#how-to-edit-the-config-file) to see what needs to be changed)  
-2) Copy & paste the updated `fftp.conf` to `Tester/new`.  
-3) Open terminal and change working directory to `Tester/new` in the terminal.  
-  For example: if the current working directory is `path/to/LightFTPTesting`,  
-  type `cd Tester/new` in the terminal  
+
+
+1) Go to `Tester/new` and edit the `fftp.conf` (click [here](#how-to-edit-the-config-file) to see what needs to be changed)   
+      - Run the shell script `shCleanMake.sh` followed by `shStartLightFTP.sh` to verify that the LightFTP server can be successfully started.
+2) Open terminal and change working directory to `Tester/new` in the terminal.  
+      - For example: if the current working directory is `path/to/LightFTPTesting`, type `cd Tester/new` in the terminal  
   to change the current working directory to `path/to/LightFTPTesting/Tester/new`
-4) Type `python main_ftp.py` in the terminal.  
+3) Ensure that Python version `> 3.10` is installed. Run `pip install -r requirements.txt` to install python dependencies (Pexpect).
+4) Type `python3 main_ftp.py` in the terminal.  
 
 
 ## How to edit the config file  
@@ -56,4 +57,5 @@ If you are interested on each section of the config file, you can look [here](ht
 
 ## FAQ
 1. After running the `python main_ftp.py`, this line appears for each iteration `550 permission denied`. How to fix?  
-   Ensure that the `root` value for each user is properly defined in the `fftp.conf` in both `Source/Release` and `Tester/new` directcory and ensure the empty folder exists in that path.
+   - Ensure that the `root` value for each user is properly defined in the `fftp.conf` in both `Source/Release` and `Tester/new` directory and ensure the empty folder exists in that path.
+   - Ensure that the proper line breaks are used in .sh scripts and both `fftp.conf` files  (`LF` for UNIX systems, `CRLF` for Windows systems)
