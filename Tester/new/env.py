@@ -10,9 +10,9 @@ NUM_TESTS = 10
 MIN_TO_RUN = 3
 
 # Paths
-CONFIG_PATH = '../../Source/Release/fftp.conf'
+CONFIG_PATH = './fftp.conf'
 COVERAGE_PATH = "../../Source/Release/ftpserv.gcov.json"
-TEST_PATH = "./tests/put.txt"
+TEST_PATH = "./tests/put_del.txt"
 SEED_PATH = "./seeds/put.txt"
 INPUT_GEN_PATH = "./input"
 

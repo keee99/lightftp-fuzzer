@@ -5,7 +5,6 @@ import os
 from parsers.seed_parser import SeedParser
 import random
 import string
-import time
 from typing import List
 
 
@@ -73,7 +72,7 @@ class InputManager:
     # Add and fuzz a new set of input and file input (for seeding)
     def add_input(self, oldInput: List[str], exec_path="", energy=1) -> None:
 
-        file_name_charset = string.ascii_letters + string.digits + "()_-,."
+        file_name_charset = string.ascii_letters + string.digits + "()_-,. "
 
         for e in range(energy):
 
@@ -159,7 +158,6 @@ class InputManager:
 
         result = 0
         mean_freq = self.get_mean_path_freq()
-
         if path_freq > mean_freq:
             result = 0
         else:
@@ -169,6 +167,7 @@ class InputManager:
                 ENERGY_FACTOR * ceil(pow(2, path_freq))])
         
         if PRINT_TEST_LOGS:
+            print("Mean Path Freq", mean_freq)
             print("Energy", result)
 
         return result
