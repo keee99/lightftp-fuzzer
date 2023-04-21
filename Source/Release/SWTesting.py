@@ -61,5 +61,3 @@ if not os.path.exists(target_folder):
 
 # Start Server
 subprocess.Popen(os.system("sudo ./fftp"))
-# Client
-# subprocess.Popen(os.system(f"ftp {ipAddress} -P {port}"))

@@ -11,7 +11,7 @@ if not os.path.exists(dir_path):
 # Define the number of files to create
 num_files = 200
 
-# Define the length of the random filename
+
 # Define the range of possible filename lengths
 min_length = 1
 max_length = 23

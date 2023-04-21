@@ -1,10 +1,13 @@
 import pexpect
 import traceback
 
-from inputParse import seed_input
-from mutate_parse import seed_input
-from configParser import retrieve_account_details,retrieve_config_details,set_config
+from ftp_parse import seed_input
 from output_manager import manage_output
+
+
+
+
+from configParser import retrieve_account_details,retrieve_config_details,set_config
 
 # Check port in cfg file is not 21 and change to 80 if it is
 configDetails = retrieve_config_details()
@@ -21,24 +24,26 @@ FTP_UNAME = 'webadmin'
 FTP_PWD = accountDetails[FTP_UNAME]['pswd'] #'password'
 FTP_ADDR = configDetails['interface'] #'127.0.0.1'
 FTP_PORT = configDetails['port'] #8080
-SEED_DIR = "./seed"
+SEED_DIR = "./seeds"
+
 
 PRINT_TEST_LOGS = True
-
-
+failed=[]
 
 # Test input
-#   _input and _expect same length --> each input gives an expected output
-#   _assert: final assertions to validate final state
+
 test_input = seed_input(SEED_DIR)
 
 
 
 # Main func
 def main():
-    test_result = map(run_tests, test_input)
-    manage_output(list(test_result))
-    print("test results:", list(map(run_tests, test_input)), "\n")
+    test_result= list(map(run_tests, test_input))
+    print("test results:", test_result, "\n")
+    manage_output(test_result)
+    
+    print("Failed inputs: ")
+    print(failed)
 
 
 
@@ -67,8 +72,8 @@ def run_tests(tests):
         print("\n======= NEW test =========")
 
     result = True
-    
     ftp = spawn_ftp_conn()
+    print(tests)
     try:
         for test in tests:
             _input = test["_input"]
@@ -79,7 +84,6 @@ def run_tests(tests):
 
             # iterate through and send the inputs
             for i in range(len(_input)):
-                
                 
                 ftp.sendline(_input[i])
                 ftp.expect(_expect[i])
@@ -109,6 +113,11 @@ def run_tests(tests):
 
     if PRINT_TEST_LOGS:
         print("======= END test ========= \n")
+
+    if(result==False):
+        failed.append(test["_input"][2])
+
+
     return result
 
 
