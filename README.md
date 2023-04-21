@@ -51,6 +51,9 @@ Next use the following:
 2. Create an empty folder anywhere in your system.  
 3. Change `root` value for each user (line `76`, `81`, `86`) to your absolute path in your system that directs to the empty folder for the `root`.  
 
+If you are interested on each section of the config file, you can look [here](https://github.com/hfiref0x/LightFTP#configuration) for more details.
+
+
 ## FAQ
 1. After running the `python main_ftp.py`, this line appears for each iteration `550 permission denied`. How to fix?  
    Ensure that the `root` value for each user is properly defined in the `fftp.conf` in both `Source/Release` and `Tester/new` directcory and ensure the empty folder exists in that path.
