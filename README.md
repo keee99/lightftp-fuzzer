@@ -27,6 +27,16 @@ or if this doesn't work try:
       sudo apt install libgnutls28-dev  
 
 ## How To Run
+Download source from [https://github.com/Stygian84/LightFTPTesting.git](https://github.com/Stygian84/LightFTPTesting.git) or use git. 
+
+In case if you want to use git and git is not installed, install it first:
+
+      sudo apt install git
+      
+Next use the following:
+
+      git clone https://github.com/Stygian84/LightFTPTesting.git  
+      
 1) Go to `Source/Release` and edit the `fftp.conf` (click [here](#how-to-edit-the-config-file) to see what needs to be changed)  
 2) Copy & paste the updated `fftp.conf` to `Tester/new`.  
 3) Open terminal and change working directory to `Tester/new` in the terminal.  
