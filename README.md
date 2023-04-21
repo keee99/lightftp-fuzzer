@@ -6,6 +6,26 @@ This github contains greybox fuzzer to test [LightFTP](https://github.com/hfiref
 * x86-32/x64 Windows 7/8/8.1/10 with Cygwin (see Build section of this readme).
 * No admin/root privileges required. FTP server must be allowed in firewall.  
 
+## Build (This section is referred from [here](https://github.com/hfiref0x/LightFTP/blob/master/README.md#build)
+
+* LightFTP comes with full source code, written in C;
+* In order to build from source in Windows you need Cygwin environment (https://www.cygwin.com/) with GNU make, gnutls and pthreads packages installed. Also make sure Cygwin bin folder is set in system wide PATH variable (e.g. PATH=SomeOfYourOtherValues;C:\Cygwin\bin;C:\Cygwin\usr\bin). To build executable run make command in the Release directory;
+* In order to build from source in Linux you need GCC C compiler, run make command in the Release directory. LigthFTP uses GnuTLS, make sure you have headers (libgnutls-dev or gnutls-dev) installed.
+
+### Example for Linux Mint 19.3/Ubuntu 18.04
+
+You need GCC and Make installed. If they are not installed you can install them as part of build-essential package:
+
+      sudo apt install build-essential
+      
+LightFTP uses GnuTLS library. It need to be installed before compiling LightFTP. To install it, open terminal and use:
+
+      sudo apt install gnutls-dev
+	  
+or if this doesn't work try:
+
+      sudo apt install libgnutls28-dev  
+
 ## How To Run
 1) Go to `Source/Release` and edit the `fftp.conf` (click [here](#how-to-edit-the-config-file) to see what needs to be changed)  
 2) Copy & paste the updated `fftp.conf` to `Tester/new`.  
